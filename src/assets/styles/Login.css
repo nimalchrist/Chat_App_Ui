@@ -1,4 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
+
 .login-component{
+    font-family: 'Open Sans', sans-serif;
     width: 80%;
     height: auto;
     margin: 20px auto;
@@ -25,8 +29,8 @@
     border: none;
     background-color: beige;
     margin-top: 4px;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 400;
 }
 
 .login-btn{

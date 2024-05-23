@@ -9,10 +9,9 @@ const initializeSocket = async (): Promise<Socket | null> => {
     if (window.location.pathname === "/home") {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.error("No access token found");
         resolve(null);
       }
-      const socket = io("http://localhost:4200", {
+      const socket: Socket = io("http://localhost:4200", {
         auth: {
           token,
         },
@@ -21,15 +20,12 @@ const initializeSocket = async (): Promise<Socket | null> => {
         },
       });
       socket.on("connect", () => {
-        console.log("Socket connected: ", socket);
         resolve(socket);
       });
       socket.on("disconnect", () => {
-        console.log("Socket disconnected:", socket);
         resolve(null);
       });
       socket.on("connect_error", (error) => {
-        console.error("Socket connection error:", error);
         resolve(null);
       });
     } else {
@@ -47,7 +43,7 @@ const SocketContextProvider = ({ children }: SocketProviderProps) => {
   useEffect(() => {
     const initialise = async () => {
       try {
-        const newSocket = await initializeSocket();
+        const newSocket:Socket | null = await initializeSocket();
         setSocket(newSocket);
         if (!newSocket || !newSocket.connected) {
           navigate("/not_authorised_to_view_this_page");

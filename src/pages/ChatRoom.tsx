@@ -7,6 +7,7 @@ const ChatRoom = () => {
     <SokcetProvider>
       <div className="chat-room">
         <h1 className="title">Chatify</h1>
+        {/* just now only single room */}
         <Chat />
       </div>
     </SokcetProvider>

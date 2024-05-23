@@ -1,7 +1,8 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
 import { useNavigate } from "react-router-dom";
-
+import LoginSuccessResponse from "../../dto/LoginSuccessResponse";
+import RegisterSuccessResponse from "../../dto/RegisterSuccessResponse";
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -24,7 +25,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data: LoginSuccessResponse = await response.json();
         setAuth({
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
@@ -42,7 +43,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
   const logout = async () => {
-    console.log("logout function called");
     setAuth({ accessToken: null, refreshToken: null });
     const bodyPayload = {
       token: localStorage.getItem("refreshToken"),
@@ -87,7 +87,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         alert("user registered successfully. Please login to continue");
         navigate("/");
       } else {
-        const data = await response.json();
+        const data: RegisterSuccessResponse = await response.json();
         alert(data.message);
       }
     } catch (error) {
@@ -97,7 +97,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // supportive methods
   const checkLogin = async () => {
-    console.log("checking login status");
     try {
       const response = await fetch("http://localhost:4200/isLogined", {
         method: "GET",
@@ -112,12 +111,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsAuthenticated(false);
       }
     } catch (error) {
-      console.error(error);
       setIsAuthenticated(false);
     }
   };
   const getAccessTokenFromRefreshToken = async () => {
-    console.log("getting accessToken from refreshToken");
     try {
       const { refreshToken } = auth;
       const response = await fetch("http://localhost:4200/token", {
@@ -136,18 +133,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }));
         localStorage.setItem("accessToken", data.accessToken);
       } else {
-        console.log("refresh token is not valid");
         logout();
       }
     } catch (error) {
-      console.error("Error refreshing token:", error);
       alert("Token refresh failed. Please log in again.");
       logout();
     }
-    console.log("got accessToken from refreshToken");
   };
   const checkTokenExpiry = () => {
-    console.log("checking access token expiry");
     const { accessToken } = auth;
     if (!accessToken) return;
 

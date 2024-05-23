@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client";
 import MessageList from "./MessageList";
 import MessageForm from "./MessageForm";
 import ClientCount from "./ClientCount";
@@ -7,6 +6,13 @@ import Message from "../../dto/Message";
 import { useNavigate } from "react-router-dom";
 import useAuthentication from "../../contexts/AuthContext/useAuthentication";
 import useSocket from "../../contexts/SocketContext/useSocket";
+interface UserData {
+  userName: string;
+  email: string;
+  password: string;
+  _id: string;
+  __v: number;
+}
 
 const Chat: React.FC = () => {
   const navigate = useNavigate();
@@ -17,12 +23,7 @@ const Chat: React.FC = () => {
   const [room, setRoom] = useState<string>("sampleroom");
   const messageContainerRef = useRef<HTMLUListElement>(null);
   const { logout } = useAuthentication();
-
-  const userData = localStorage.getItem("authData");
-  if (!userData) {
-    navigate("/not_authorised_to_view_this_page");
-  }
-  const parsedUserData = JSON.parse(userData!);
+  const [parsedUserData, setParsedUserData] = useState<UserData | null>(null);
 
   // handlers
   const handleSendMessage = (message: string) => {
@@ -31,12 +32,11 @@ const Chat: React.FC = () => {
       return;
     }
     const newMessage: Message = {
-      name: parsedUserData.userName,
+      name: parsedUserData!.userName,
       message,
       dateTime: new Date(),
-      userId: parsedUserData._id,
+      userId: parsedUserData!._id,
     };
-    console.log("sending message", newMessage);
     socket.emit("message", newMessage, room);
   };
 
@@ -45,8 +45,6 @@ const Chat: React.FC = () => {
   };
 
   const handleChatMessage = (receivedMessage: Message) => {
-    console.log("received message: ", receivedMessage);
-
     setMessages((prevMessages: Message[]) => [
       ...prevMessages,
       receivedMessage,
@@ -65,6 +63,10 @@ const Chat: React.FC = () => {
       socket.disconnect();
       setSocket(null);
     }
+    localStorage.setItem(
+      `${parsedUserData?.userName}_${room}`,
+      JSON.stringify(messages)
+    );
     logout();
   };
 
@@ -77,7 +79,22 @@ const Chat: React.FC = () => {
       );
     }
   };
-  
+
+  // useEffect hook
+  useEffect(() => {
+    const data: string | null = localStorage.getItem("authData");
+
+    if (!data) {
+      navigate("/");
+      return;
+    }
+    try {
+      const parsedData: UserData = JSON.parse(data);
+      setParsedUserData(parsedData);
+    } catch (error) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     if (socket) {
@@ -86,7 +103,6 @@ const Chat: React.FC = () => {
       socket.on("feedback", handleUpdateFeedback);
       socket.on("clients-total", handleClientsTotal);
       return () => {
-        console.log("Cleaning up event listeners");
         socket.off("chat-message", handleChatMessage);
         socket.off("feedback", handleUpdateFeedback);
         socket.off("clients-total", handleClientsTotal);
@@ -98,6 +114,35 @@ const Chat: React.FC = () => {
     scrollToBottom();
   }, [messages, feedback]);
 
+  useEffect(() => {
+    if (parsedUserData && room) {
+      const storedMessages = localStorage.getItem(
+        `${parsedUserData.userName}_${room}`
+      );
+      if (storedMessages) {
+        setMessages(JSON.parse(storedMessages));
+      }
+    }
+  }, [parsedUserData, room]);
+
+  useEffect(() => {
+    if (parsedUserData && room) {
+      const handleBeforeUnload = () => {
+        localStorage.setItem(
+          `${parsedUserData.userName}_${room}`,
+          JSON.stringify(messages)
+        );
+      };
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }
+  }, [parsedUserData, room, messages]);
+
+  if (!parsedUserData) {
+    return null;
+  }
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "350px" }}>
       <div style={{ alignSelf: "flex-end" }}>
