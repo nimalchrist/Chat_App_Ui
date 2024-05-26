@@ -3,27 +3,23 @@ import MessageList from "./MessageList";
 import MessageForm from "./MessageForm";
 import ClientCount from "./ClientCount";
 import Message from "../../dto/Message";
-import { useNavigate } from "react-router-dom";
-import useAuthentication from "../../contexts/AuthContext/useAuthentication";
-import useSocket from "../../contexts/SocketContext/useSocket";
-interface UserData {
-  userName: string;
-  email: string;
-  password: string;
-  _id: string;
-  __v: number;
+import useAuthentication from "../../hooks/useAuthentication";
+import useSocket from "../../hooks/useSocket";
+import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
+import "../../assets/styles/Chat.css";
+
+interface ChatProps {
+  roomId: string | undefined;
 }
 
-const Chat: React.FC = () => {
-  const navigate = useNavigate();
+const Chat: React.FC<ChatProps> = ({ roomId }) => {
   const { socket, setSocket } = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
   const [clientsTotal, setClientsTotal] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>("");
-  const [room, setRoom] = useState<string>("sampleroom");
   const messageContainerRef = useRef<HTMLUListElement>(null);
   const { logout } = useAuthentication();
-  const [parsedUserData, setParsedUserData] = useState<UserData | null>(null);
+  const parsedUserData = useAuthenticatedUser();
 
   // handlers
   const handleSendMessage = (message: string) => {
@@ -37,11 +33,13 @@ const Chat: React.FC = () => {
       dateTime: new Date(),
       userId: parsedUserData!._id,
     };
-    socket.emit("message", newMessage, room);
+    socket.emit("message", newMessage, roomId);
   };
 
   const handleFeedback = (feedback: string) => {
-    socket?.emit("feedback", { feedback, room });
+    if (socket && roomId) {
+      socket.emit("feedback", { feedback, roomId });
+    }
   };
 
   const handleChatMessage = (receivedMessage: Message) => {
@@ -63,10 +61,12 @@ const Chat: React.FC = () => {
       socket.disconnect();
       setSocket(null);
     }
-    localStorage.setItem(
-      `${parsedUserData?.userName}_${room}`,
-      JSON.stringify(messages)
-    );
+    if (roomId) {
+      localStorage.setItem(
+        `${parsedUserData?.userName}_${roomId}`,
+        JSON.stringify(messages)
+      );
+    }
     logout();
   };
 
@@ -82,23 +82,8 @@ const Chat: React.FC = () => {
 
   // useEffect hook
   useEffect(() => {
-    const data: string | null = localStorage.getItem("authData");
-
-    if (!data) {
-      navigate("/");
-      return;
-    }
-    try {
-      const parsedData: UserData = JSON.parse(data);
-      setParsedUserData(parsedData);
-    } catch (error) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.emit("chat", room);
+    if (socket && roomId) {
+      socket.emit("chat", roomId);
       socket.on("chat-message", handleChatMessage);
       socket.on("feedback", handleUpdateFeedback);
       socket.on("clients-total", handleClientsTotal);
@@ -108,28 +93,28 @@ const Chat: React.FC = () => {
         socket.off("clients-total", handleClientsTotal);
       };
     }
-  }, [socket, room]);
+  }, [socket, roomId]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, feedback]);
 
   useEffect(() => {
-    if (parsedUserData && room) {
+    if (parsedUserData && roomId) {
       const storedMessages = localStorage.getItem(
-        `${parsedUserData.userName}_${room}`
+        `${parsedUserData.userName}_${roomId}`
       );
       if (storedMessages) {
         setMessages(JSON.parse(storedMessages));
       }
     }
-  }, [parsedUserData, room]);
+  }, [parsedUserData, roomId]);
 
   useEffect(() => {
-    if (parsedUserData && room) {
+    if (parsedUserData && roomId) {
       const handleBeforeUnload = () => {
         localStorage.setItem(
-          `${parsedUserData.userName}_${room}`,
+          `${parsedUserData.userName}_${roomId}`,
           JSON.stringify(messages)
         );
       };
@@ -138,7 +123,7 @@ const Chat: React.FC = () => {
         window.removeEventListener("beforeunload", handleBeforeUnload);
       };
     }
-  }, [parsedUserData, room, messages]);
+  }, [parsedUserData, roomId, messages]);
 
   if (!parsedUserData) {
     return null;

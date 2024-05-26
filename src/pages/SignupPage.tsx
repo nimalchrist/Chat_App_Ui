@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../assets/styles/Signup.css";
 import { Link, useNavigate } from "react-router-dom";
-import useAuthentication from "../contexts/AuthContext/useAuthentication";
+import useAuthentication from "../hooks/useAuthentication";
 
 const Signup = () => {
   const { register } = useAuthentication();

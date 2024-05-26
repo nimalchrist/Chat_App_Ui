@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../assets/styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import useAuthentication from "../contexts/AuthContext/useAuthentication";
+import useAuthentication from "../hooks/useAuthentication";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

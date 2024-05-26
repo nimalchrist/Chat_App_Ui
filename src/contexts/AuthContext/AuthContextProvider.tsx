@@ -33,12 +33,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
         localStorage.setItem("authData", JSON.stringify(data.user));
+        setIsAuthenticated(true);
         navigate("/home");
       } else {
         const errorData = await response.json();
+        setIsAuthenticated(false);
         alert(errorData.message || "An error occurred while logging in.");
       }
     } catch (error) {
+      setIsAuthenticated(false);
       alert("An error occurred while logging in.");
     }
   };
@@ -95,62 +98,61 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // supportive methods
-  const checkLogin = async () => {
-    try {
-      const response = await fetch("http://localhost:4200/isLogined", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
-      if (response.ok) {
-        await response.json();
-        setIsAuthenticated(true);
-      } else {
+  useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const response = await fetch("http://localhost:4200/isLogined", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${auth.accessToken}`,
+          },
+        });
+        if (response.ok) {
+          await response.json();
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
         setIsAuthenticated(false);
       }
-    } catch (error) {
-      setIsAuthenticated(false);
-    }
-  };
-  const getAccessTokenFromRefreshToken = async () => {
-    try {
-      const { refreshToken } = auth;
-      const response = await fetch("http://localhost:4200/token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: refreshToken }),
-      });
+    };
+    const checkTokenExpiry = () => {
+      const { accessToken } = auth;
+      if (!accessToken) return;
 
-      if (response.ok) {
-        const data = await response.json();
-        setAuth((prev) => ({
-          ...prev,
-          accessToken: data.accessToken,
-        }));
-        localStorage.setItem("accessToken", data.accessToken);
-      } else {
+      const decodedToken = JSON.parse(atob(accessToken.split(".")[1]));
+      const expirationTime = decodedToken.exp * 1000;
+      if (Date.now() >= expirationTime) {
+        getAccessTokenFromRefreshToken();
+      }
+    };
+    const getAccessTokenFromRefreshToken = async () => {
+      try {
+        const { refreshToken } = auth;
+        const response = await fetch("http://localhost:4200/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: refreshToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setAuth((prev) => ({
+            ...prev,
+            accessToken: data.accessToken,
+          }));
+          localStorage.setItem("accessToken", data.accessToken);
+        } else {
+          logout();
+        }
+      } catch (error) {
+        alert("Token refresh failed. Please log in again.");
         logout();
       }
-    } catch (error) {
-      alert("Token refresh failed. Please log in again.");
-      logout();
-    }
-  };
-  const checkTokenExpiry = () => {
-    const { accessToken } = auth;
-    if (!accessToken) return;
-
-    const decodedToken = JSON.parse(atob(accessToken.split(".")[1]));
-    const expirationTime = decodedToken.exp * 1000;
-    if (Date.now() >= expirationTime) {
-      getAccessTokenFromRefreshToken();
-    }
-  };
-  useEffect(() => {
+    };
     checkLogin();
     const intervalId = setInterval(checkTokenExpiry, 1000 * 60 * 15);
     return () => clearInterval(intervalId);

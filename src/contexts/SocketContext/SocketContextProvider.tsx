@@ -1,36 +1,31 @@
-import path from "path";
 import { ReactNode, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Socket, io } from "socket.io-client";
 import SocketContext from "./SocketContext";
 
-const initializeSocket = async (): Promise<Socket | null> => {
+const initializeSocket = async (path: string): Promise<Socket | null> => {
   return new Promise((resolve, reject) => {
-    if (window.location.pathname === "/home") {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        resolve(null);
-      }
-      const socket: Socket = io("http://localhost:4200", {
-        auth: {
-          token,
-        },
-        query: {
-          path: "/home",
-        },
-      });
-      socket.on("connect", () => {
-        resolve(socket);
-      });
-      socket.on("disconnect", () => {
-        resolve(null);
-      });
-      socket.on("connect_error", (error) => {
-        resolve(null);
-      });
-    } else {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
       resolve(null);
     }
+    const socket: Socket = io("http://localhost:4200", {
+      auth: {
+        token,
+      },
+      query: {
+        path,
+      },
+    });
+    socket.on("connect", () => {
+      resolve(socket);
+    });
+    socket.on("disconnect", () => {
+      resolve(null);
+    });
+    socket.on("connect_error", (error) => {
+      resolve(null);
+    });
   });
 };
 interface SocketProviderProps {
@@ -38,15 +33,21 @@ interface SocketProviderProps {
 }
 const SocketContextProvider = ({ children }: SocketProviderProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     const initialise = async () => {
+      console.log("initialize socket called");
       try {
-        const newSocket:Socket | null = await initializeSocket();
-        setSocket(newSocket);
-        if (!newSocket || !newSocket.connected) {
-          navigate("/not_authorised_to_view_this_page");
+        const pathname: string = location.pathname;
+        if (/^\/home\/[^/]+$/.test(pathname)) {
+          console.log("it wil not be executed at the time of rendering");
+          const newSocket: Socket | null = await initializeSocket(pathname);
+          setSocket(newSocket);
+          if (!newSocket || !newSocket.connected) {
+            navigate("/not_authorised_to_view_this_page");
+          }
         }
       } catch (error) {
         setSocket(null);
@@ -57,7 +58,7 @@ const SocketContextProvider = ({ children }: SocketProviderProps) => {
     return () => {
       socket?.disconnect();
     };
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>

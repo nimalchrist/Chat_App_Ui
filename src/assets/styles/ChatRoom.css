@@ -1,0 +1,36 @@
+.chat-room {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.title {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.create-room,
+.join-room {
+    margin-bottom: 20px;
+}
+
+.create-room input,
+.join-room input {
+    outline: none;
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 1em;
+}
+
+.create-room button,
+.join-room button {
+    outline: none;
+    border: none;
+    background-color: #3d68f3;
+    color: white;
+    padding: 10px;
+    font-size: 1em;
+    margin: 10px 8px;
+    border-radius: 4px;
+}

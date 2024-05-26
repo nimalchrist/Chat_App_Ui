@@ -3,10 +3,12 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Route, Routes } from "react-router-dom";
 import NoPage from "./pages/NoPage";
-import Signup from "./pages/Signup";
-import ChatRoom from "./pages/ChatRoom";
+import Signup from "./pages/SignupPage";
+import ChatRoom from "./pages/ChatRoomPage";
 import AuthProvider from "./contexts/AuthContext/AuthContextProvider";
+import SocketProvider from "./contexts/SocketContext/SocketContextProvider";
 import { BrowserRouter } from "react-router-dom";
+import ChatPage from "./pages/ChatPage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,12 +16,15 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
     <AuthProvider>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/home" element={<ChatRoom />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/*" element={<NoPage />} />
-      </Routes>
+      <SocketProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/home" element={<ChatRoom />} />
+          <Route path="/home/:roomId" element={<ChatPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/*" element={<NoPage />} />
+        </Routes>
+      </SocketProvider>
     </AuthProvider>
   </BrowserRouter>
 );
