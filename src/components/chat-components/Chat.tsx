@@ -132,7 +132,14 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
     <div style={{ display: "flex", flexDirection: "column", width: "350px" }}>
       <div style={{ alignSelf: "flex-end" }}>
         <button
-          style={{ outline: "none", padding: "10px 20px", margin: "20px 0px" }}
+          style={{
+            border: "none",
+            outline: "none",
+            padding: "10px 20px",
+            margin: "20px 0px",
+            backgroundColor: "#3d68f3",
+            color: "white",
+          }}
           onClick={() => {
             handleLogout();
           }}>

@@ -34,3 +34,16 @@
     margin: 10px 8px;
     border-radius: 4px;
 }
+
+/* 
+initialize socket called SocketContextProvider.tsx:41
+Loaded new content contentScript.js:6
+expected to be called at the time of homepage loading and chat ui loading  useAuthenticatedUser.tsx:11  
+initialize socket called SocketContextProvider.tsx:41
+*/
+
+/* 
+expected to be called at the time of homepage loading and chat ui loading useAuthenticatedUser.tsx:11 
+2 initialize socket called SocketContextProvider.tsx:41
+Loaded new content contentScript.js:6
+*/

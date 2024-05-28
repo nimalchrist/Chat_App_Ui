@@ -4,7 +4,7 @@ import reportWebVitals from "./reportWebVitals";
 import { Route, Routes } from "react-router-dom";
 import NoPage from "./pages/NoPage";
 import Signup from "./pages/SignupPage";
-import ChatRoom from "./pages/ChatRoomPage";
+import ChatRoomPage from "./pages/ChatRoomPage";
 import AuthProvider from "./contexts/AuthContext/AuthContextProvider";
 import SocketProvider from "./contexts/SocketContext/SocketContextProvider";
 import { BrowserRouter } from "react-router-dom";
@@ -19,7 +19,7 @@ root.render(
       <SocketProvider>
         <Routes>
           <Route path="/" element={<App />} />
-          <Route path="/home" element={<ChatRoom />} />
+          <Route path="/home" element={<ChatRoomPage />} />
           <Route path="/home/:roomId" element={<ChatPage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/*" element={<NoPage />} />

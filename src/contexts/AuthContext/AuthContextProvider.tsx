@@ -13,10 +13,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     accessToken: localStorage.getItem("accessToken"),
     refreshToken: localStorage.getItem("refreshToken"),
   });
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch("http://localhost:4200/login", {
+      const response = await fetch("http://localhost:4200/api/v1/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,25 +33,21 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
         localStorage.setItem("authData", JSON.stringify(data.user));
-        setIsAuthenticated(true);
         navigate("/home");
       } else {
         const errorData = await response.json();
-        setIsAuthenticated(false);
         alert(errorData.message || "An error occurred while logging in.");
       }
     } catch (error) {
-      setIsAuthenticated(false);
       alert("An error occurred while logging in.");
     }
   };
   const logout = async () => {
-    setAuth({ accessToken: null, refreshToken: null });
     const bodyPayload = {
       token: localStorage.getItem("refreshToken"),
     };
     try {
-      const response = await fetch("http://localhost:4200/logout", {
+      const response = await fetch("http://localhost:4200/api/v1/users/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +58,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("authData");
-        setIsAuthenticated(false);
+        setAuth({ accessToken: null, refreshToken: null });
         navigate("/");
       } else {
         alert("Server error occured");
@@ -70,7 +66,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       alert(error);
     }
-    setIsAuthenticated(false);
+    setAuth({ accessToken: null, refreshToken: null });
     navigate("/");
   };
   const register = async (
@@ -79,7 +75,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     password: string
   ) => {
     try {
-      const response = await fetch("http://localhost:4200/register", {
+      const response = await fetch("http://localhost:4200/api/v1/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +97,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const response = await fetch("http://localhost:4200/isLogined", {
+        const response = await fetch("http://localhost:4200/api/v1/users/isLogined", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${auth.accessToken}`,
@@ -109,12 +105,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         });
         if (response.ok) {
           await response.json();
-          setIsAuthenticated(true);
         } else {
-          setIsAuthenticated(false);
+          setAuth({ accessToken: null, refreshToken: null });
         }
       } catch (error) {
-        setIsAuthenticated(false);
+        setAuth({ accessToken: null, refreshToken: null });
       }
     };
     const checkTokenExpiry = () => {
@@ -130,7 +125,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const getAccessTokenFromRefreshToken = async () => {
       try {
         const { refreshToken } = auth;
-        const response = await fetch("http://localhost:4200/token", {
+        const response = await fetch("http://localhost:4200/api/v1/users/token", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -153,14 +148,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         logout();
       }
     };
+    
     checkLogin();
     const intervalId = setInterval(checkTokenExpiry, 1000 * 60 * 15);
     return () => clearInterval(intervalId);
-  }, [auth]);
+  }, [auth.accessToken]);
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, auth, login, logout, register }}>
+    <AuthContext.Provider value={{ auth, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

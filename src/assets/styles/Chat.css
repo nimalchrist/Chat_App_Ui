@@ -8,7 +8,7 @@
     box-sizing: border-box;
     scroll-behavior: smooth;
 }
-.chat-room {
+.chat-room, .chat-component {
     font-family: 'Open Sans', sans-serif;
     display: grid;
     place-items: center;

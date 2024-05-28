@@ -5,7 +5,7 @@ import useAuthentication from "../hooks/useAuthentication";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuthentication();
+  const { login, auth } = useAuthentication();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -25,10 +25,10 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (auth.accessToken) {
       navigate("/home");
     }
-  }, [isAuthenticated, navigate]);
+  }, [auth.accessToken, navigate]);
   return (
     <div className="login-component">
       <h2>LOGIN</h2>

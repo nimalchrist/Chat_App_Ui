@@ -6,17 +6,17 @@ import useAuthentication from "./useAuthentication";
 const useAuthenticatedUser = () => {
   const navigate = useNavigate();
   const [parsedUserData, setParsedUserData] = useState<UserData | null>(null);
-  const { isAuthenticated } = useAuthentication();
+  const { auth } = useAuthentication();
   useEffect(() => {
-    console.log(
-      "expected to be called at the time of homepage loading and chat ui loading"
-    );
+    console.log("useAuthenticatedUser effect called");
     const data: string | null = localStorage.getItem("authData");
     if (!data) {
+      console.log("No auth data found, navigating to login page.");
       navigate("/");
       return;
     }
-    if (!isAuthenticated) {
+    if (!auth.accessToken) {
+      console.log("User not authenticated, navigating to not authorized page.");
       navigate("/not_authorised_to_view_this_page");
       return;
     }
@@ -26,8 +26,8 @@ const useAuthenticatedUser = () => {
     } catch (error) {
       navigate("/");
     }
-  }, [navigate, isAuthenticated]);
-  
+  }, [navigate, auth.accessToken]);
+
   return parsedUserData;
 };
 
