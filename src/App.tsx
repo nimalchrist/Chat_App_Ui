@@ -1,9 +1,9 @@
-import Login from "./pages/LoginPage";
+import LoginPage from "./pages/LoginPage";
 
 const App = () => {
   return (
     <>
-      <Login />
+      <LoginPage />
     </>
   );
 };

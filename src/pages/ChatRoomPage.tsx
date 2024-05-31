@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import "../assets/styles/ChatRoom.css";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthenticatedUser from "../hooks/useAuthenticatedUser";
 import useAuthentication from "../hooks/useAuthentication";
+import "../assets/styles/ChatRoom.css";
 
 const ChatRoomPage = () => {
   const navigate = useNavigate();
   const [createRoomName, setCreateRoomName] = useState("");
   const [joinRoomName, setJoinRoomName] = useState("");
-  const { logout } = useAuthentication();
-  const [availableRooms, setAvailableRooms] = useState<[] | null>(null);
+  const { auth, logout } = useAuthentication();
   useAuthenticatedUser();
 
   // handlers
@@ -20,31 +19,37 @@ const ChatRoomPage = () => {
       setCreateRoomName("");
     }
   };
-  const handleJoinRoom = () => {
+  const handleJoinRoom = async () => {
     if (joinRoomName) {
-      console.log("Joining room:", joinRoomName);
-      navigate(`/home/${joinRoomName}`);
-      setJoinRoomName("");
+      console.log("Joining room: ", joinRoomName);
+      try {
+        const response = await fetch(
+          `http://localhost:4200/api/v1/rooms/${joinRoomName}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${auth.accessToken}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          navigate(`/home/${joinRoomName}`);
+          setJoinRoomName("");
+        } else {
+          alert(
+            "The entered room is not available. Try creating a new room or Enter a valid room name"
+          );
+          setJoinRoomName("");
+        }
+      } catch (error) {
+        alert(error);
+      }
     }
   };
   const handleLogout = async () => {
     await logout();
   };
-  useEffect(() => {
-    const fetchAvailableRooms = async () => {
-      try {
-        const response = await fetch("http://localhost:4200/rooms");
-        if (response.ok) {
-          const data = await response.json();
-          setAvailableRooms(data.availableRooms);
-        }
-      } catch (error) {
-        setAvailableRooms(null);
-      }
-    };
-    fetchAvailableRooms();
-  }, []);
-
   return (
     <div
       className="chat-room"
@@ -61,18 +66,6 @@ const ChatRoomPage = () => {
       <h1 className="title" style={{ width: "100%" }}>
         Chatify
       </h1>
-      <div>
-        <h1>Live rooms</h1>
-        {availableRooms && availableRooms.length > 0 ? (
-          availableRooms.map((room, index) => (
-            <h2 key={index} style={{ fontWeight: 400 }}>
-              {index + 1}. {room}
-            </h2>
-          ))
-        ) : (
-          <h2 style={{ fontWeight: 400 }}>No rooms available at the moment</h2>
-        )}
-      </div>
       <div>
         <div>
           <button
@@ -110,7 +103,6 @@ const ChatRoomPage = () => {
             placeholder="Enter room name to join"
             value={joinRoomName}
             onChange={(e) => setJoinRoomName(e.target.value)}
-            disabled={!availableRooms || availableRooms.length === 0}
           />
           {joinRoomName && !createRoomName && (
             <div>

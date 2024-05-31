@@ -1,13 +1,13 @@
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Route, Routes } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
 import NoPage from "./pages/NoPage";
 import Signup from "./pages/SignupPage";
 import ChatRoomPage from "./pages/ChatRoomPage";
 import AuthProvider from "./contexts/AuthContext/AuthContextProvider";
 import SocketProvider from "./contexts/SocketContext/SocketContextProvider";
-import { BrowserRouter } from "react-router-dom";
 import ChatPage from "./pages/ChatPage";
 
 const root = ReactDOM.createRoot(

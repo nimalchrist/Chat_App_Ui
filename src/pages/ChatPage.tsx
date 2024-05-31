@@ -8,7 +8,7 @@ const ChatPage = () => {
 
   return (
     <div className="chat-component">
-      <Chat roomId={roomId} />
+      <Chat roomData={roomId} />
     </div>
   );
 };

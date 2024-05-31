@@ -9,10 +9,10 @@ import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
 import "../../assets/styles/Chat.css";
 
 interface ChatProps {
-  roomId: string | undefined;
+  roomData: string | undefined;
 }
 
-const Chat: React.FC<ChatProps> = ({ roomId }) => {
+const Chat: React.FC<ChatProps> = ({ roomData }) => {
   const { socket, setSocket } = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
   const [clientsTotal, setClientsTotal] = useState<number>(0);
@@ -33,12 +33,12 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
       dateTime: new Date(),
       userId: parsedUserData!._id,
     };
-    socket.emit("message", newMessage, roomId);
+    socket.emit("message", newMessage, roomData);
   };
 
   const handleFeedback = (feedback: string) => {
-    if (socket && roomId) {
-      socket.emit("feedback", { feedback, roomId });
+    if (socket && roomData) {
+      socket.emit("feedback", { feedback, roomId: roomData });
     }
   };
 
@@ -61,9 +61,9 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
       socket.disconnect();
       setSocket(null);
     }
-    if (roomId) {
+    if (roomData) {
       localStorage.setItem(
-        `${parsedUserData?.userName}_${roomId}`,
+        `${parsedUserData?.userName}_${roomData}`,
         JSON.stringify(messages)
       );
     }
@@ -82,8 +82,8 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
 
   // useEffect hook
   useEffect(() => {
-    if (socket && roomId) {
-      socket.emit("chat", roomId);
+    if (socket && roomData && parsedUserData) {
+      socket.emit("chat", roomData, parsedUserData.userName);
       socket.on("chat-message", handleChatMessage);
       socket.on("feedback", handleUpdateFeedback);
       socket.on("clients-total", handleClientsTotal);
@@ -93,28 +93,28 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
         socket.off("clients-total", handleClientsTotal);
       };
     }
-  }, [socket, roomId]);
+  }, [socket, roomData, parsedUserData]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, feedback]);
 
   useEffect(() => {
-    if (parsedUserData && roomId) {
+    if (parsedUserData && roomData) {
       const storedMessages = localStorage.getItem(
-        `${parsedUserData.userName}_${roomId}`
+        `${parsedUserData.userName}_${roomData}`
       );
       if (storedMessages) {
         setMessages(JSON.parse(storedMessages));
       }
     }
-  }, [parsedUserData, roomId]);
+  }, [parsedUserData, roomData]);
 
   useEffect(() => {
-    if (parsedUserData && roomId) {
+    if (parsedUserData && roomData) {
       const handleBeforeUnload = () => {
         localStorage.setItem(
-          `${parsedUserData.userName}_${roomId}`,
+          `${parsedUserData.userName}_${roomData}`,
           JSON.stringify(messages)
         );
       };
@@ -123,7 +123,7 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
         window.removeEventListener("beforeunload", handleBeforeUnload);
       };
     }
-  }, [parsedUserData, roomId, messages]);
+  }, [parsedUserData, roomData, messages]);
 
   if (!parsedUserData) {
     return null;
