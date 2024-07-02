@@ -130,7 +130,13 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
   }
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "350px" }}>
-      <div style={{ alignSelf: "flex-end" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          margin: "20px 0px",
+        }}>
+        <h2>{roomData}</h2>
         <button
           style={{
             border: "none",
