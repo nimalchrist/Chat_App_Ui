@@ -1,8 +1,9 @@
+import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const NoPage = () => {
   return (
-    <div
+    <Box
       style={{
         display: "flex",
         flexDirection: "column",
@@ -18,7 +19,7 @@ const NoPage = () => {
       <h3>
         By clicking this <Link to="/">Home page</Link>
       </h3>
-    </div>
+    </Box>
   );
 };
 

@@ -1,14 +1,8 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import moment from "moment";
-import Message from "../../dto/Message";
+import MessageListProps from "../../interface/MessageListProps";
 
-interface Props {
-  messages: Message[];
-  feedback: string;
-  userId: string;
-}
-
-const MessageList = forwardRef<HTMLUListElement, Props>(
+const MessageList = forwardRef<HTMLUListElement, MessageListProps>(
   ({ messages, feedback, userId }, ref) => {
     return (
       <ul className="message-container" ref={ref}>

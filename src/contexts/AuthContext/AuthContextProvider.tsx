@@ -1,14 +1,13 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
 import { useNavigate } from "react-router-dom";
-import LoginSuccessResponse from "../../dto/LoginSuccessResponse";
-import RegisterSuccessResponse from "../../dto/RegisterSuccessResponse";
-interface AuthProviderProps {
-  children: ReactNode;
-}
+import LoginSuccessResponse from "../../interface/LoginSuccessResponse";
+import useSnackBar from "../../hooks/useSnackBar";
+import AuthProviderProps from "../../interface/AuthProviderProps";
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
+  const { showMessage } = useSnackBar();
   const [auth, setAuth] = useState({
     accessToken: localStorage.getItem("accessToken"),
     refreshToken: localStorage.getItem("refreshToken"),
@@ -36,10 +35,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         navigate("/home");
       } else {
         const errorData = await response.json();
-        alert(errorData.message || "An error occurred while logging in.");
+        showMessage(
+          errorData.message || "An error occurred while logging in.",
+          "error"
+        );
       }
-    } catch (error) {
-      alert("An error occurred while logging in.");
+    } catch (error: any) {
+      showMessage("An error occurred while logging in.", "error");
     }
   };
   const logout = async () => {
@@ -47,13 +49,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       token: localStorage.getItem("refreshToken"),
     };
     try {
-      const response = await fetch("http://localhost:4200/api/v1/users/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bodyPayload),
-      });
+      const response = await fetch(
+        "http://localhost:4200/api/v1/users/logout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bodyPayload),
+        }
+      );
       if (response.ok) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
@@ -61,10 +66,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setAuth({ accessToken: null, refreshToken: null });
         navigate("/");
       } else {
-        alert("Server error occured");
+        showMessage("Server error occured", "error");
       }
-    } catch (error) {
-      alert(error);
+    } catch (error: any) {
+      showMessage(error, "error");
     }
     setAuth({ accessToken: null, refreshToken: null });
     navigate("/");
@@ -75,34 +80,40 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     password: string
   ) => {
     try {
-      const response = await fetch("http://localhost:4200/api/v1/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userName, email, password }),
-      });
+      const response = await fetch(
+        "http://localhost:4200/api/v1/users/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userName, email, password }),
+        }
+      );
       if (response.ok) {
-        alert("user registered successfully. Please login to continue");
+        showMessage(
+          "user registered successfully. Please login to continue",
+          "success"
+        );
         navigate("/");
-      } else {
-        const data: RegisterSuccessResponse = await response.json();
-        alert(data.message);
       }
-    } catch (error) {
-      alert(error);
+    } catch (error: any) {
+      showMessage("An error occurred while signing in.", "error");
     }
   };
 
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const response = await fetch("http://localhost:4200/api/v1/users/isLogined", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${auth.accessToken}`,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:4200/api/v1/users/isLogined",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${auth.accessToken}`,
+            },
+          }
+        );
         if (response.ok) {
           await response.json();
         } else {
@@ -125,13 +136,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const getAccessTokenFromRefreshToken = async () => {
       try {
         const { refreshToken } = auth;
-        const response = await fetch("http://localhost:4200/api/v1/users/token", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token: refreshToken }),
-        });
+        const response = await fetch(
+          "http://localhost:4200/api/v1/users/token",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token: refreshToken }),
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -144,11 +158,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
           logout();
         }
       } catch (error) {
-        alert("Token refresh failed. Please log in again.");
+        showMessage("Token refresh failed. Please log in again.", "error");
         logout();
       }
     };
-    
+
     checkLogin();
     const intervalId = setInterval(checkTokenExpiry, 1000 * 60 * 15);
     return () => clearInterval(intervalId);

@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import MessageList from "./MessageList";
-import MessageForm from "./MessageForm";
-import ClientCount from "./ClientCount";
-import Message from "../../dto/Message";
+import { Box, Button } from "@mui/material";
 import useAuthentication from "../../hooks/useAuthentication";
 import useSocket from "../../hooks/useSocket";
 import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
+import MessageList from "./MessageList";
+import MessageForm from "./MessageForm";
+import ClientCount from "./ClientCount";
+import ChatProps from "../../interface/ChatProps";
 import "../../assets/styles/Chat.css";
+import Message from "../../interface/Message";
 
-interface ChatProps {
-  roomData: string | undefined;
-}
 
 const Chat: React.FC<ChatProps> = ({ roomData }) => {
   const { socket, setSocket } = useSocket();
@@ -129,16 +128,16 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
     return null;
   }
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "350px" }}>
-      <div
+    <Box style={{ display: "flex", flexDirection: "column", width: "350px" }}>
+      <Box
         style={{
           display: "flex",
           justifyContent: "space-between",
           margin: "20px 0px",
         }}>
         <h2>{roomData}</h2>
-        <button
-          style={{
+        <Button
+          sx={{
             border: "none",
             outline: "none",
             padding: "10px 20px",
@@ -150,15 +149,15 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
             handleLogout();
           }}>
           Logout
-        </button>
-      </div>
-      <div className="chat">
-        <div className="name">
+        </Button>
+      </Box>
+      <Box className="chat">
+        <Box className="name">
           <span>
             <i className="far fa-user"></i>
           </span>
           <h3 className="name-input">{parsedUserData.userName}</h3>
-        </div>
+        </Box>
         <MessageList
           messages={messages}
           feedback={feedback}
@@ -171,8 +170,8 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
           onFeedback={handleFeedback}
         />
         <ClientCount total={clientsTotal} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

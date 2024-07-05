@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthenticatedUser from "../hooks/useAuthenticatedUser";
 import useAuthentication from "../hooks/useAuthentication";
 import "../assets/styles/ChatRoom.css";
+import { Box, Button } from "@mui/material";
 
 const ChatRoomPage = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const ChatRoomPage = () => {
     await logout();
   };
   return (
-    <div
+    <Box
       className="chat-room"
       style={{
         display: "flex",
@@ -66,9 +67,9 @@ const ChatRoomPage = () => {
       <h1 className="title" style={{ width: "100%" }}>
         Chatify
       </h1>
-      <div>
-        <div>
-          <button
+      <Box>
+        <Box>
+          <Button
             style={{
               outline: "none",
               border: "none",
@@ -81,9 +82,9 @@ const ChatRoomPage = () => {
               handleLogout();
             }}>
             Logout
-          </button>
-        </div>
-        <div className="create-room">
+          </Button>
+        </Box>
+        <Box className="create-room">
           <input
             type="text"
             placeholder="Enter room name to create"
@@ -91,13 +92,13 @@ const ChatRoomPage = () => {
             onChange={(e) => setCreateRoomName(e.target.value)}
           />
           {createRoomName && !joinRoomName && (
-            <div>
-              <button onClick={handleCreateRoom}>Create Room</button>
-              <button onClick={() => setCreateRoomName("")}>Cancel</button>
-            </div>
+            <Box>
+              <Button onClick={handleCreateRoom}>Create Room</Button>
+              <Button onClick={() => setCreateRoomName("")}>Cancel</Button>
+            </Box>
           )}
-        </div>
-        <div className="join-room">
+        </Box>
+        <Box className="join-room">
           <input
             type="text"
             placeholder="Enter room name to join"
@@ -105,14 +106,14 @@ const ChatRoomPage = () => {
             onChange={(e) => setJoinRoomName(e.target.value)}
           />
           {joinRoomName && !createRoomName && (
-            <div>
-              <button onClick={handleJoinRoom}>Join Room</button>
-              <button onClick={() => setJoinRoomName("")}>Cancel</button>
-            </div>
+            <Box>
+              <Button onClick={handleJoinRoom}>Join Room</Button>
+              <Button onClick={() => setJoinRoomName("")}>Cancel</Button>
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

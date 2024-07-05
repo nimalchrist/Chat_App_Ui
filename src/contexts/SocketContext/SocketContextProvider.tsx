@@ -1,7 +1,8 @@
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Socket, io } from "socket.io-client";
 import SocketContext from "./SocketContext";
+import SocketProviderProps from "../../interface/SocketProviderProps";
 
 const initializeSocket = async (path: string): Promise<Socket | null> => {
   return new Promise((resolve, reject) => {
@@ -28,9 +29,6 @@ const initializeSocket = async (path: string): Promise<Socket | null> => {
     });
   });
 };
-interface SocketProviderProps {
-  children: ReactNode;
-}
 const SocketContextProvider = ({ children }: SocketProviderProps) => {
   const navigate = useNavigate();
   const location = useLocation();

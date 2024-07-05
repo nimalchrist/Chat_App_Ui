@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UserData from "../dto/AuthenticatedUserData";
+import UserData from "../interface/UserData";
 import useAuthentication from "./useAuthentication";
 
 const useAuthenticatedUser = () => {

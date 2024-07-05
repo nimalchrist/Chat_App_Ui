@@ -1,15 +1,5 @@
 import { createContext } from "react";
-
-interface AuthContextType {
-  auth: { accessToken: string | null; refreshToken: string | null };
-  login: (email: string, password: string) => Promise<void>;
-  register: (
-    userName: string,
-    email: string,
-    password: string
-  ) => Promise<void>;
-  logout: () => Promise<void>;
-}
+import AuthContextType from "../../interface/AuthContextType";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

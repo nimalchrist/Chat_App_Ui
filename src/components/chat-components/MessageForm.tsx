@@ -1,12 +1,8 @@
+import { Box, Button } from "@mui/material";
 import React, { useState } from "react";
+import MessageFormProps from "../../interface/MessageFormProps";
 
-interface Props {
-  userName: string;
-  onSendMessage: (message: string) => void;
-  onFeedback: (feedback: string) => void;
-}
-
-const MessageForm: React.FC<Props> = ({
+const MessageForm: React.FC<MessageFormProps> = ({
   userName,
   onSendMessage,
   onFeedback,
@@ -35,13 +31,13 @@ const MessageForm: React.FC<Props> = ({
         onBlur={() => onFeedback("")}
         className="message-input"
       />
-      <div className="v-divider"></div>
-      <button type="submit" className="send-button">
+      <Box className="v-divider"></Box>
+      <Button type="submit" className="send-button">
         send{" "}
         <span>
           <i className="fas fa-paper-plane"></i>
         </span>
-      </button>
+      </Button>
     </form>
   );
 };

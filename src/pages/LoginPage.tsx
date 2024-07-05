@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
-import "../assets/styles/Login.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
 import useAuthentication from "../hooks/useAuthentication";
+import LoginForm from "../components/login-components/LoginForm";
+import { validateEmail, validatePassword } from "../utils/validation";
+import useSnackBar from "../hooks/useSnackBar";
+import "../assets/styles/Login.css";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, auth } = useAuthentication();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const { showMessage } = useSnackBar();
+  const { login, auth } = useAuthentication();
 
-  const handleLoginSubmit = async (e: any) => {
+  const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert("Invalid email format");
+    if (!validateEmail(email)) {
+      showMessage("Invalid email format", "error");
       return;
     }
-    if (!password.trim()) {
-      alert("password is required");
+    const { isValid, message } = validatePassword(password);
+    if (!isValid) {
+      showMessage(message, "error");
       return;
     }
     login(email, password);
@@ -29,35 +33,19 @@ const Login: React.FC = () => {
       navigate("/home");
     }
   }, [auth.accessToken, navigate]);
+
   return (
-    <div className="login-component">
+    <Box className="login-component">
       <h2>LOGIN</h2>
-      <div className="input-fields">
-        <form onSubmit={handleLoginSubmit} className="login-form">
-          <label>Email:</label>
-          <input
-            className="login-field"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <br />
-          <label>Password:</label>
-          <input
-            className="login-field"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button className="login-btn">Login</button>
-        </form>
-        <p>
-          Don't have an account? <Link to="/signup">Signup</Link>
-        </p>
-      </div>
-    </div>
+      <LoginForm
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        handleLoginSubmit={handleLoginSubmit}
+      />
+    </Box>
   );
 };
+
 export default Login;

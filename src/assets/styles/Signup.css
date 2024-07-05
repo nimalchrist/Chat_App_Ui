@@ -2,45 +2,64 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
 
 .signup-component {
-    font-family: "Open Sans", sans-serif;
-    width: 80%;
+    font-family: 'Open Sans', sans-serif;
+    width: 70%;
     height: auto;
-    margin: 20px auto;
-    display: grid;
-    place-items: center;
+    margin: 100px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-
-.input-fields {
-    border: 1px solid black;
+.signup-component .input-fields {
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     width: 40%;
-    padding: 40px;
+    padding: 5%;
     border-radius: 25px;
 }
-
-.form-container {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+.form-container .signup-btn {
+    width: 100%;
+    margin: 20px auto 0px auto;
 }
 
-.signup-field {
-    outline: none;
-    padding: 12px;
-    border: none;
-    background-color: beige;
-    margin-top: 4px;
-    font-size: 16px;
-    font-weight: 400;
+/* Media Queries */
+@media (max-width: 1200px) {
+
+    /* Laptop screens */
+    .signup-component {
+        width: 80%;
+    }
+
+    .signup-component .input-fields {
+        width: 50%;
+    }
 }
 
-.signup-btn {
-    margin: 25px 0px;
-    background-color: #3d68f3;
-    outline: none;
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: bold;
+@media (max-width: 768px) {
+
+    /* Tablet screens */
+    .signup-component {
+        width: 90%;
+        margin: 50px auto;
+    }
+
+    .signup-component .input-fields {
+        width: 70%;
+        padding: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Mobile screens */
+    .signup-component {
+        width: 100%;
+        margin: 50px auto;
+    }
+    .signup-component .input-fields {
+        width: 90%;
+        padding: 30px;
+    }
+    .form-container .signup-btn {
+        width: 100%;
+        margin: 10px auto 0px auto;
+    }
 }

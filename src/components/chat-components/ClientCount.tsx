@@ -1,10 +1,7 @@
 import React from "react";
+import ClientCountProps from "../../interface/ClientCountProps";
 
-interface Props {
-  total: number;
-}
-
-const ClientCount: React.FC<Props> = ({ total }) => {
+const ClientCount: React.FC<ClientCountProps> = ({ total }) => {
   return <h3 className="clients-total">Total Clients: {total}</h3>;
 };
 
