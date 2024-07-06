@@ -96,6 +96,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
           "success"
         );
         navigate("/");
+      } else {
+        const data = await response.json();
+        showMessage(data.message, "error");
       }
     } catch (error: any) {
       showMessage("An error occurred while signing in.", "error");

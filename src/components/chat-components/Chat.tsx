@@ -7,9 +7,7 @@ import MessageList from "./MessageList";
 import MessageForm from "./MessageForm";
 import ClientCount from "./ClientCount";
 import ChatProps from "../../interface/ChatProps";
-import "../../assets/styles/Chat.css";
 import Message from "../../interface/Message";
-
 
 const Chat: React.FC<ChatProps> = ({ roomData }) => {
   const { socket, setSocket } = useSocket();
@@ -21,6 +19,8 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
   const parsedUserData = useAuthenticatedUser();
 
   // handlers
+
+  // callback for when the message is sent
   const handleSendMessage = (message: string) => {
     if (!socket) {
       console.error("Socket is not initialized");
@@ -32,15 +32,18 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
       dateTime: new Date(),
       userId: parsedUserData!._id,
     };
+
     socket.emit("message", newMessage, roomData);
   };
 
+  // callback for feedback
   const handleFeedback = (feedback: string) => {
     if (socket && roomData) {
       socket.emit("feedback", { feedback, roomId: roomData });
     }
   };
 
+  // callback for whenever the chat message is received
   const handleChatMessage = (receivedMessage: Message) => {
     setMessages((prevMessages: Message[]) => [
       ...prevMessages,
@@ -128,35 +131,37 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
     return null;
   }
   return (
-    <Box style={{ display: "flex", flexDirection: "column", width: "350px" }}>
+    <Box
+      className="chat-container"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "350px",
+      }}>
       <Box
-        style={{
+        sx={{
           display: "flex",
+          flexDirection: "row",
           justifyContent: "space-between",
-          margin: "20px 0px",
+          margin: "20px auto",
+          width: "80%",
         }}>
         <h2>{roomData}</h2>
         <Button
-          sx={{
-            border: "none",
-            outline: "none",
-            padding: "10px 20px",
-            margin: "20px 0px",
-            backgroundColor: "#3d68f3",
-            color: "white",
-          }}
+          variant="contained"
+          color="error"
           onClick={() => {
             handleLogout();
           }}>
           Logout
         </Button>
       </Box>
-      <Box className="chat">
-        <Box className="name">
+      <Box className="chat-window">
+        <Box className="chat-username">
           <span>
             <i className="far fa-user"></i>
           </span>
-          <h3 className="name-input">{parsedUserData.userName}</h3>
+          <h3 className="username">{parsedUserData.userName}</h3>
         </Box>
         <MessageList
           messages={messages}

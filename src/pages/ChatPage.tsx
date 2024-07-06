@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import Chat from "../components/chat-components/Chat";
 import useAuthenticatedUser from "../hooks/useAuthenticatedUser";
 import { Box } from "@mui/material";
+import "../assets/styles/Chat.css";
 
 const ChatPage = () => {
   useAuthenticatedUser();

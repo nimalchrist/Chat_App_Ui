@@ -1,36 +1,60 @@
+/* desktop and laptop */
 .chat-room {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 80%;
+    height: auto;
+    margin: 100px auto;
     padding: 20px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
-
-.title {
+.chat-room .room-title{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 50%;
+}
+.room-title .title {
     font-size: 2em;
-    margin-bottom: 20px;
+    margin: 20px 0px;
+}
+.chat-room .room-fields-section{
+    width: 50%;
+    padding: 10px 30px;
+}
+.room-fields-section .create-room-section button{
+    margin: 10px 20px;
+}
+.room-fields-section .join-room-section button{
+    margin: 10px 20px;
 }
 
-.create-room,
-.join-room {
-    margin-bottom: 20px;
+/* responsive design */
+
+/* tablet */
+@media (max-width: 768px) {
+    .chat-room{
+        width: 80%;
+    }
+    .chat-room .room-title {
+        width: 80%;
+    }
+    .chat-room .room-fields-section{
+        width: 80%;
+    }
 }
 
-.create-room input,
-.join-room input {
-    outline: none;
-    padding: 10px;
-    margin-right: 10px;
-    font-size: 1em;
-}
-
-.create-room button,
-.join-room button {
-    outline: none;
-    border: none;
-    background-color: #3d68f3;
-    color: white;
-    padding: 10px;
-    font-size: 1em;
-    margin: 10px 8px;
-    border-radius: 4px;
+/* mobile */
+@media (max-width: 488px) {
+    .chat-room {
+        margin: 140px 0;
+        width: 98%;
+    }
+    .chat-room .room-title {
+        width: 100%;
+    }
+    .chat-room .room-fields-section {
+        width: 100%;
+    }
 }

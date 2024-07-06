@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import React, { useState } from "react";
 import MessageFormProps from "../../interface/MessageFormProps";
 
@@ -9,6 +9,7 @@ const MessageForm: React.FC<MessageFormProps> = ({
 }) => {
   const [message, setMessage] = useState<string>("");
 
+  // callback for when the send message button is clicked or enter key is pressed
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
@@ -22,6 +23,7 @@ const MessageForm: React.FC<MessageFormProps> = ({
     <form className="message-form" onSubmit={handleSubmit}>
       <input
         type="text"
+        placeholder="Enter message to send"
         value={message}
         onChange={(e) => {
           setMessage(e.target.value);
@@ -31,9 +33,12 @@ const MessageForm: React.FC<MessageFormProps> = ({
         onBlur={() => onFeedback("")}
         className="message-input"
       />
-      <Box className="v-divider"></Box>
-      <Button type="submit" className="send-button">
-        send{" "}
+      <Button
+        type="submit"
+        variant="contained"
+        color="info"
+        className="send-button">
+        send
         <span>
           <i className="fas fa-paper-plane"></i>
         </span>

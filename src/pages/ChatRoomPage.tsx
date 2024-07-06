@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthenticatedUser from "../hooks/useAuthenticatedUser";
 import useAuthentication from "../hooks/useAuthentication";
-import "../assets/styles/ChatRoom.css";
 import { Box, Button } from "@mui/material";
+import "../assets/styles/ChatRoom.css";
+import TextInput from "../components/text-components/TextInput";
+import useSnackBar from "../hooks/useSnackBar";
 
 const ChatRoomPage = () => {
   const navigate = useNavigate();
   const [createRoomName, setCreateRoomName] = useState("");
   const [joinRoomName, setJoinRoomName] = useState("");
   const { auth, logout } = useAuthentication();
+  const { showMessage } = useSnackBar();
   useAuthenticatedUser();
 
   // handlers
@@ -38,13 +41,14 @@ const ChatRoomPage = () => {
           navigate(`/home/${joinRoomName}`);
           setJoinRoomName("");
         } else {
-          alert(
-            "The entered room is not available. Try creating a new room or Enter a valid room name"
+          showMessage(
+            "The entered room is not available. Try creating a new room or Enter a valid room name",
+            "warning"
           );
           setJoinRoomName("");
         }
       } catch (error) {
-        alert(error);
+        showMessage("error joining the room", "error");
       }
     }
   };
@@ -52,63 +56,68 @@ const ChatRoomPage = () => {
     await logout();
   };
   return (
-    <Box
-      className="chat-room"
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        width: "80%",
-        flexWrap: "wrap",
-        border: "1px solid black",
-        margin: "100px auto",
-        borderRadius: "12px",
-      }}>
-      <h1 className="title" style={{ width: "100%" }}>
-        Chatify
-      </h1>
-      <Box>
-        <Box>
-          <Button
-            style={{
-              outline: "none",
-              border: "none",
-              padding: "10px 20px",
-              margin: "20px 0px",
-              backgroundColor: "#3d68f3",
-              color: "white",
-            }}
-            onClick={() => {
-              handleLogout();
-            }}>
-            Logout
-          </Button>
-        </Box>
-        <Box className="create-room">
-          <input
+    <Box className="chat-room">
+      <Box className="room-title">
+        <h1 className="title">Chatify</h1>
+        <Button
+          variant="contained"
+          color="error"
+          sx={{
+            margin: "20px 0",
+            padding: "10px 20px",
+          }}
+          onClick={() => {
+            handleLogout();
+          }}>
+          Logout
+        </Button>
+      </Box>
+      <Box className="room-fields-section">
+        <Box className="create-room-section">
+          <TextInput
+            label="Enter room name to create"
             type="text"
-            placeholder="Enter room name to create"
-            value={createRoomName}
             onChange={(e) => setCreateRoomName(e.target.value)}
+            value={createRoomName}
           />
           {createRoomName && !joinRoomName && (
-            <Box>
-              <Button onClick={handleCreateRoom}>Create Room</Button>
-              <Button onClick={() => setCreateRoomName("")}>Cancel</Button>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleCreateRoom}>
+                Create Room
+              </Button>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => setCreateRoomName("")}>
+                Cancel
+              </Button>
             </Box>
           )}
         </Box>
-        <Box className="join-room">
-          <input
+        <Box className="join-room-section">
+          <TextInput
             type="text"
-            placeholder="Enter room name to join"
+            label="Enter room name to join"
             value={joinRoomName}
             onChange={(e) => setJoinRoomName(e.target.value)}
           />
           {joinRoomName && !createRoomName && (
-            <Box>
-              <Button onClick={handleJoinRoom}>Join Room</Button>
-              <Button onClick={() => setJoinRoomName("")}>Cancel</Button>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleJoinRoom}>
+                Join Room
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setJoinRoomName("")}>
+                Cancel
+              </Button>
             </Box>
           )}
         </Box>
