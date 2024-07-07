@@ -5,6 +5,7 @@ import SocketContext from "./SocketContext";
 import SocketProviderProps from "../../interface/SocketProviderProps";
 
 const initializeSocket = async (path: string): Promise<Socket | null> => {
+  console.log(3);
   return new Promise((resolve, reject) => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -35,12 +36,11 @@ const SocketContextProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
+    console.log(2);
     const initialise = async () => {
-      console.log("initialize socket called");
       try {
         const pathname: string = location.pathname;
         if (/^\/home\/[^/]+$/.test(pathname)) {
-          console.log("it wil not be executed at the time of rendering");
           const newSocket: Socket | null = await initializeSocket(pathname);
           setSocket(newSocket);
           if (!newSocket || !newSocket.connected) {

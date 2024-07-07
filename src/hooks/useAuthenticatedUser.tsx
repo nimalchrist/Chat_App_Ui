@@ -8,15 +8,13 @@ const useAuthenticatedUser = () => {
   const [parsedUserData, setParsedUserData] = useState<UserData | null>(null);
   const { auth } = useAuthentication();
   useEffect(() => {
-    console.log("useAuthenticatedUser effect called");
+    console.log("custom hook");
     const data: string | null = localStorage.getItem("authData");
-    if (!data) {
-      console.log("No auth data found, navigating to login page.");
+    if (!auth.accessToken) {
       navigate("/");
       return;
     }
-    if (!auth.accessToken) {
-      console.log("User not authenticated, navigating to not authorized page.");
+    if (!data) {
       navigate("/not_authorised_to_view_this_page");
       return;
     }

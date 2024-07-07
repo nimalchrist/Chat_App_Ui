@@ -18,14 +18,12 @@ const ChatRoomPage = () => {
   // handlers
   const handleCreateRoom = () => {
     if (createRoomName) {
-      console.log("Creating room:", createRoomName);
       navigate(`/home/${createRoomName}`);
       setCreateRoomName("");
     }
   };
   const handleJoinRoom = async () => {
     if (joinRoomName) {
-      console.log("Joining room: ", joinRoomName);
       try {
         const response = await fetch(
           `http://localhost:4200/api/v1/rooms/${joinRoomName}`,

@@ -106,6 +106,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
+    console.log(1);
     const checkLogin = async () => {
       try {
         const response = await fetch(
@@ -120,10 +121,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         if (response.ok) {
           await response.json();
         } else {
-          setAuth({ accessToken: null, refreshToken: null });
+          localStorage.removeItem("accessToken");
+          setAuth({ ...auth, accessToken: null });
+          getAccessTokenFromRefreshToken();
         }
       } catch (error) {
-        setAuth({ accessToken: null, refreshToken: null });
+        localStorage.removeItem("accessToken");
+        setAuth({ ...auth, accessToken: null });
+        getAccessTokenFromRefreshToken();
       }
     };
     const checkTokenExpiry = () => {
