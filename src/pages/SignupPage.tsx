@@ -1,20 +1,20 @@
 import { useState } from "react";
-import useAuthentication from "../hooks/useAuthentication";
 import SignupForm from "../components/signup-components/SignupForm";
 import { validateEmail, validatePassword } from "../utils/validation";
 import { Box } from "@mui/material";
 import "../assets/styles/Signup.css";
 import useSnackBar from "../hooks/useSnackBar";
+import useAuthentication1 from "../hooks/useAuthentication";
 
 const Signup = () => {
-  const { register } = useAuthentication();
+  const { register } = useAuthentication1();
   const { showMessage } = useSnackBar();
   const [userName, setUserName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const handleSignupSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!userName.trim()) {
       showMessage("Username is required", "warning");
@@ -34,7 +34,7 @@ const Signup = () => {
       showMessage("Passwords do not match", "error");
       return;
     }
-    register(userName, email, password);
+    await register(userName, email, password);
   };
 
   return (

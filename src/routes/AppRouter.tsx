@@ -1,4 +1,3 @@
-// AppRouter.tsx
 import { Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
@@ -9,6 +8,7 @@ import ChatPage from "../pages/ChatPage";
 import AuthProvider from "../contexts/AuthContext/AuthContextProvider";
 import SocketProvider from "../contexts/SocketContext/SocketContextProvider";
 import SnackBarProvider from "../contexts/SnackBarContext/SnackBarContextProvider";
+import ProtectedRoute from "../components/protected-routes/ProtectedRoute";
 
 const AppRouter = () => {
   return (
@@ -18,8 +18,10 @@ const AppRouter = () => {
           <SocketProvider>
             <Routes>
               <Route path="/" element={<LoginPage />} />
-              <Route path="/home" element={<ChatRoomPage />} />
-              <Route path="/home/:roomId" element={<ChatPage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/home" element={<ChatRoomPage />} />
+                <Route path="/home/:roomId" element={<ChatPage />} />
+              </Route>
               <Route path="/signup" element={<Signup />} />
               <Route path="/*" element={<NoPage />} />
             </Routes>

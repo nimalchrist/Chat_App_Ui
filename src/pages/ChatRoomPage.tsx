@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuthenticatedUser from "../hooks/useAuthenticatedUser";
-import useAuthentication from "../hooks/useAuthentication";
 import { Box, Button } from "@mui/material";
 import "../assets/styles/ChatRoom.css";
 import TextInput from "../components/text-components/TextInput";
 import useSnackBar from "../hooks/useSnackBar";
+import useAuthentication1 from "../hooks/useAuthentication";
+import axios from "axios";
 
 const ChatRoomPage = () => {
   const navigate = useNavigate();
   const [createRoomName, setCreateRoomName] = useState("");
   const [joinRoomName, setJoinRoomName] = useState("");
-  const { auth, logout } = useAuthentication();
+  const { logout } = useAuthentication1();
   const { showMessage } = useSnackBar();
-  useAuthenticatedUser();
 
   // handlers
   const handleCreateRoom = () => {
@@ -25,17 +24,11 @@ const ChatRoomPage = () => {
   const handleJoinRoom = async () => {
     if (joinRoomName) {
       try {
-        const response = await fetch(
-          `http://localhost:4200/api/v1/rooms/${joinRoomName}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${auth.accessToken}`,
-            },
-          }
+        const response = await axios(
+          `http://localhost:4200/api/v1/rooms/${joinRoomName}`
         );
 
-        if (response.ok) {
+        if (response.status === 200) {
           navigate(`/home/${joinRoomName}`);
           setJoinRoomName("");
         } else {
@@ -46,7 +39,11 @@ const ChatRoomPage = () => {
           setJoinRoomName("");
         }
       } catch (error) {
-        showMessage("error joining the room", "error");
+        showMessage(
+          "The entered room is not available. Try creating a new room or Enter a valid room name",
+          "warning"
+        );
+        setJoinRoomName("");
       }
     }
   };

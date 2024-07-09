@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
-import useAuthentication from "../hooks/useAuthentication";
+// import useAuthentication from "../hooks/useAuthentication";
 import LoginForm from "../components/login-components/LoginForm";
 import { validateEmail, validatePassword } from "../utils/validation";
 import useSnackBar from "../hooks/useSnackBar";
 import "../assets/styles/Login.css";
+import useAuthentication1 from "../hooks/useAuthentication";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { showMessage } = useSnackBar();
-  const { login, auth } = useAuthentication();
+  const { login, authData } = useAuthentication1();
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,14 +26,14 @@ const Login: React.FC = () => {
       showMessage(message, "error");
       return;
     }
-    login(email, password);
+    await login(email, password);
   };
 
   useEffect(() => {
-    if (auth.accessToken) {
+    if (authData.accessToken) {
       navigate("/home");
     }
-  }, [auth.accessToken, navigate]);
+  }, [authData.accessToken, navigate]);
 
   return (
     <Box className="login-component">

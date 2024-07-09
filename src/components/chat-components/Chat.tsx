@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Button } from "@mui/material";
-import useAuthentication from "../../hooks/useAuthentication";
+import useAuthentication1 from "../../hooks/useAuthentication";
 import useSocket from "../../hooks/useSocket";
-import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
 import MessageList from "./MessageList";
 import MessageForm from "./MessageForm";
 import ClientCount from "./ClientCount";
@@ -15,24 +14,20 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
   const [clientsTotal, setClientsTotal] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>("");
   const messageContainerRef = useRef<HTMLUListElement>(null);
-  const { logout } = useAuthentication();
-  const parsedUserData = useAuthenticatedUser();
+  const { authData, logout } = useAuthentication1();
 
-  // handlers
-
+  // event handlers
   // callback for when the message is sent
   const handleSendMessage = (message: string) => {
     if (!socket) {
-      console.error("Socket is not initialized");
       return;
     }
     const newMessage: Message = {
-      name: parsedUserData!.userName,
+      name: authData.user!.userName,
       message,
       dateTime: new Date(),
-      userId: parsedUserData!._id,
+      userId: authData.user!._id,
     };
-
     socket.emit("message", newMessage, roomData);
   };
 
@@ -51,25 +46,25 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
     ]);
   };
 
+  // state handlers
   const handleUpdateFeedback = (feedback: string) => {
     setFeedback(feedback);
   };
-
   const handleClientsTotal = (totalClients: number) => {
     setClientsTotal(totalClients);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (socket) {
       socket.disconnect();
       setSocket(null);
     }
-    if (roomData) {
-      localStorage.setItem(
-        `${parsedUserData?.userName}_${roomData}`,
-        JSON.stringify(messages)
-      );
-    }
-    logout();
+    // if (roomData) {
+    //   localStorage.setItem(
+    //     `${authData.user!.userName}_${roomData}`,
+    //     JSON.stringify(messages)
+    //   );
+    // }
+    await logout();
   };
 
   // supportive methods
@@ -84,8 +79,8 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
 
   // useEffect hook
   useEffect(() => {
-    if (socket && roomData && parsedUserData) {
-      socket.emit("chat", roomData, parsedUserData.userName);
+    if (socket && roomData) {
+      socket.emit("chat", roomData, authData.user!.userName);
       socket.on("chat-message", handleChatMessage);
       socket.on("feedback", handleUpdateFeedback);
       socket.on("clients-total", handleClientsTotal);
@@ -95,41 +90,37 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
         socket.off("clients-total", handleClientsTotal);
       };
     }
-  }, [socket, roomData, parsedUserData]);
+  }, [socket, roomData]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, feedback]);
 
-  useEffect(() => {
-    if (parsedUserData && roomData) {
-      const storedMessages = localStorage.getItem(
-        `${parsedUserData.userName}_${roomData}`
-      );
-      if (storedMessages) {
-        setMessages(JSON.parse(storedMessages));
-      }
-    }
-  }, [parsedUserData, roomData]);
+  // useEffect(() => {
+  //   if (roomData) {
+  //     const storedMessages = localStorage.getItem(
+  //       `${authData.user!.userName}_${roomData}`
+  //     );
+  //     if (storedMessages) {
+  //       setMessages(JSON.parse(storedMessages));
+  //     }
+  //   }
+  // }, [roomData]);
 
-  useEffect(() => {
-    if (parsedUserData && roomData) {
-      const handleBeforeUnload = () => {
-        localStorage.setItem(
-          `${parsedUserData.userName}_${roomData}`,
-          JSON.stringify(messages)
-        );
-      };
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }
-  }, [parsedUserData, roomData, messages]);
-
-  if (!parsedUserData) {
-    return null;
-  }
+  // useEffect(() => {
+  //   if (roomData) {
+  //     const handleBeforeUnload = () => {
+  //       localStorage.setItem(
+  //         `${authData.user!.userName}_${roomData}`,
+  //         JSON.stringify(messages)
+  //       );
+  //     };
+  //     window.addEventListener("beforeunload", handleBeforeUnload);
+  //     return () => {
+  //       window.removeEventListener("beforeunload", handleBeforeUnload);
+  //     };
+  //   }
+  // }, [roomData, messages]);
   return (
     <Box
       className="chat-container"
@@ -161,16 +152,16 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
           <span>
             <i className="far fa-user"></i>
           </span>
-          <h3 className="username">{parsedUserData.userName}</h3>
+          <h3 className="username">{authData.user!.userName}</h3>
         </Box>
         <MessageList
           messages={messages}
           feedback={feedback}
           ref={messageContainerRef}
-          userId={parsedUserData._id}
+          userId={authData.user!._id}
         />
         <MessageForm
-          userName={parsedUserData.userName}
+          userName={authData.user!.userName}
           onSendMessage={handleSendMessage}
           onFeedback={handleFeedback}
         />
