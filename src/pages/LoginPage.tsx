@@ -30,6 +30,7 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
+
     if (authData.accessToken) {
       navigate("/home");
     }

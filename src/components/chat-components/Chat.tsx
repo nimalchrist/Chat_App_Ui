@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Button } from "@mui/material";
-import useAuthentication1 from "../../hooks/useAuthentication";
+import useAuthentication from "../../hooks/useAuthentication";
 import useSocket from "../../hooks/useSocket";
 import MessageList from "./MessageList";
 import MessageForm from "./MessageForm";
@@ -14,7 +14,7 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
   const [clientsTotal, setClientsTotal] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>("");
   const messageContainerRef = useRef<HTMLUListElement>(null);
-  const { authData, logout } = useAuthentication1();
+  const { authData, logout } = useAuthentication();
 
   // event handlers
   // callback for when the message is sent
@@ -95,32 +95,9 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, feedback]);
-
-  // useEffect(() => {
-  //   if (roomData) {
-  //     const storedMessages = localStorage.getItem(
-  //       `${authData.user!.userName}_${roomData}`
-  //     );
-  //     if (storedMessages) {
-  //       setMessages(JSON.parse(storedMessages));
-  //     }
-  //   }
-  // }, [roomData]);
-
-  // useEffect(() => {
-  //   if (roomData) {
-  //     const handleBeforeUnload = () => {
-  //       localStorage.setItem(
-  //         `${authData.user!.userName}_${roomData}`,
-  //         JSON.stringify(messages)
-  //       );
-  //     };
-  //     window.addEventListener("beforeunload", handleBeforeUnload);
-  //     return () => {
-  //       window.removeEventListener("beforeunload", handleBeforeUnload);
-  //     };
-  //   }
-  // }, [roomData, messages]);
+  if (!authData.user) {
+    return <div>Loading...</div>;
+  }
   return (
     <Box
       className="chat-container"

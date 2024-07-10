@@ -1,12 +1,10 @@
-import { Navigate, Outlet } from "react-router-dom";
-import useAuthentication1 from "../../hooks/useAuthentication";
+import {  Outlet } from "react-router-dom";
+import useAuthentication from "../../hooks/useAuthentication";
+import NoPage from "../../pages/NoPage";
 
 const ProtectedRoute = () => {
-  const { authData } = useAuthentication1();
-  if (authData.accessToken === null || authData.refreshToken === null) {
-    return <Navigate to="/" replace />;
-  }
-  return <Outlet />;
-};
+  const { authData } = useAuthentication();
 
+  return( authData.accessToken !== null )? <Outlet /> : <NoPage/>;
+};
 export default ProtectedRoute;

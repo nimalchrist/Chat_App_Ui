@@ -11,16 +11,14 @@ const SocketContextProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const initialiseSocketConnection = useCallback(async () => {
-    console.log(2);
     try {
       const pathname = location.pathname;
       if (/^\/home\/[^/]+$/.test(pathname)) {
-        console.log(3);
         const newSocket = await initialiseSocket(pathname);
-        console.log(newSocket);
         setSocket(newSocket);
         if (!newSocket || !newSocket.connected) {
           navigate("/not_authorised_to_view_this_page");
+          return;
         }
       }
     } catch (error) {
@@ -30,7 +28,6 @@ const SocketContextProvider = ({ children }: SocketProviderProps) => {
   }, [location.pathname, navigate]);
 
   useEffect(() => {
-    console.log(1);
     initialiseSocketConnection();
     return () => {
       socket?.disconnect();

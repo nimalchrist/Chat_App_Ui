@@ -3,7 +3,6 @@ import jwtDecode from "./jwtDecode";
 import refreshAccessToken from "./refreshAccessToken";
 
 const initialiseSocket = async (path: string): Promise<Socket | null> => {
-  console.log(4);
   return new Promise(async (resolve, reject) => {
     let storedData = JSON.parse(localStorage.getItem("authData")!);
     let token = storedData?.accessToken;

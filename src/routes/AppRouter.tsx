@@ -1,5 +1,5 @@
-import { Route, Routes } from "react-router-dom";
-import { BrowserRouter } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import NoPage from "../pages/NoPage";
 import Signup from "../pages/SignupPage";
@@ -10,7 +10,7 @@ import SocketProvider from "../contexts/SocketContext/SocketContextProvider";
 import SnackBarProvider from "../contexts/SnackBarContext/SnackBarContextProvider";
 import ProtectedRoute from "../components/protected-routes/ProtectedRoute";
 
-const AppRouter = () => {
+const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <SnackBarProvider>

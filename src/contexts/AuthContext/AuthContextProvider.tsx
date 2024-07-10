@@ -161,7 +161,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
             error.config.headers.Authorization = `Bearer ${newAccessToken}`;
             return axios(error.config);
           } catch (refreshError) {
-            logout();
+            await logout();
             return Promise.reject(refreshError);
           }
         }
