@@ -15,17 +15,39 @@ const ChatRoomPage = () => {
   const { showMessage } = useSnackBar();
 
   // handlers
-  const handleCreateRoom = () => {
+  const handleCreateRoom = async () => {
     if (createRoomName) {
-      navigate(`/home/${createRoomName}`);
-      setCreateRoomName("");
+      try {
+        const response = await axios(
+          `http://localhost:4200/api/v1/rooms/create/${createRoomName}`
+        );
+        if (response.status === 200) {
+          showMessage("Room created successfully", "success");
+          navigate(`/home/${createRoomName}`);
+          setCreateRoomName("");
+        }
+      } catch (error: any) {
+        if (error.response.status === 403) {
+          showMessage(
+            "Room name is already exist. Try to create a unique room",
+            "error"
+          );
+          setCreateRoomName("");
+        } else if (error.response.status === 401) {
+          showMessage("Room name is missing", "error");
+          setCreateRoomName("");
+        } else {
+          showMessage("something went wrong. Try again later", "error");
+          setCreateRoomName("");
+        }
+      }
     }
   };
   const handleJoinRoom = async () => {
     if (joinRoomName) {
       try {
         const response = await axios(
-          `http://localhost:4200/api/v1/rooms/${joinRoomName}`
+          `http://localhost:4200/api/v1/rooms/join/${joinRoomName}`
         );
 
         if (response.status === 200) {
@@ -38,11 +60,15 @@ const ChatRoomPage = () => {
           );
           setJoinRoomName("");
         }
-      } catch (error) {
-        showMessage(
-          "The entered room is not available. Try creating a new room or Enter a valid room name",
-          "warning"
-        );
+      } catch (error: any) {
+        if (error.response && error.response.status === 401) {
+          showMessage("Unauthorized access. Please log in.", "warning");
+        } else {
+          showMessage(
+            "The entered room is not available. Try creating a new room or enter a valid room name.",
+            "warning"
+          );
+        }
         setJoinRoomName("");
       }
     }

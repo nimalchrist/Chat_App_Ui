@@ -8,66 +8,62 @@ import ClientCount from "./ClientCount";
 import ChatProps from "../../interface/ChatProps";
 import Message from "../../interface/Message";
 
-const Chat: React.FC<ChatProps> = ({ roomData }) => {
+const Chat: React.FC<ChatProps> = ({ roomName }) => {
   const { socket, setSocket } = useSocket();
+  const [roomKey, setRoomKey] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [clientsTotal, setClientsTotal] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>("");
   const messageContainerRef = useRef<HTMLUListElement>(null);
   const { authData, logout } = useAuthentication();
 
-  // event handlers
-  // callback for when the message is sent
+  // Event handlers
   const handleSendMessage = (message: string) => {
-    if (!socket) {
-      return;
-    }
+    if (!socket || !roomKey) return;
+
     const newMessage: Message = {
       name: authData.user!.userName,
       message,
       dateTime: new Date(),
       userId: authData.user!._id,
     };
-    socket.emit("message", newMessage, roomData);
+    socket.emit("message", newMessage, roomKey);
   };
 
-  // callback for feedback
   const handleFeedback = (feedback: string) => {
-    if (socket && roomData) {
-      socket.emit("feedback", { feedback, roomId: roomData });
+    if (socket && roomKey) {
+      socket.emit("feedback", { feedback, roomId: roomKey });
     }
   };
 
-  // callback for whenever the chat message is received
   const handleChatMessage = (receivedMessage: Message) => {
-    setMessages((prevMessages: Message[]) => [
-      ...prevMessages,
-      receivedMessage,
-    ]);
+    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
   };
 
-  // state handlers
+  const handleLoadMessage = (chatHistory: Message[]) => {
+    setMessages(chatHistory);
+  };
+
+  const handleRoomKey = (roomKey: string) => {
+    setRoomKey(roomKey);
+  };
+
   const handleUpdateFeedback = (feedback: string) => {
     setFeedback(feedback);
   };
+
   const handleClientsTotal = (totalClients: number) => {
     setClientsTotal(totalClients);
   };
+
   const handleLogout = async () => {
     if (socket) {
       socket.disconnect();
       setSocket(null);
     }
-    // if (roomData) {
-    //   localStorage.setItem(
-    //     `${authData.user!.userName}_${roomData}`,
-    //     JSON.stringify(messages)
-    //   );
-    // }
     await logout();
   };
 
-  // supportive methods
   const scrollToBottom = () => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTo(
@@ -77,27 +73,33 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
     }
   };
 
-  // useEffect hook
+  // useEffect hooks
   useEffect(() => {
-    if (socket && roomData) {
-      socket.emit("chat", roomData, authData.user!.userName);
+    if (socket && roomName) {
+      socket.emit("chat", roomName, authData.user!._id);
+      socket.on("load-messages", handleLoadMessage);
+      socket.on("room-key", handleRoomKey);
       socket.on("chat-message", handleChatMessage);
       socket.on("feedback", handleUpdateFeedback);
       socket.on("clients-total", handleClientsTotal);
       return () => {
+        socket.off("load-messages", handleLoadMessage);
+        socket.off("room-key", handleRoomKey);
         socket.off("chat-message", handleChatMessage);
         socket.off("feedback", handleUpdateFeedback);
         socket.off("clients-total", handleClientsTotal);
       };
     }
-  }, [socket, roomData]);
+  }, [socket, roomName, authData.user]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, feedback]);
+
   if (!authData.user) {
     return <div>Loading...</div>;
   }
+
   return (
     <Box
       className="chat-container"
@@ -114,13 +116,8 @@ const Chat: React.FC<ChatProps> = ({ roomData }) => {
           margin: "20px auto",
           width: "80%",
         }}>
-        <h2>{roomData}</h2>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => {
-            handleLogout();
-          }}>
+        <h2>{roomName}</h2>
+        <Button variant="contained" color="error" onClick={handleLogout}>
           Logout
         </Button>
       </Box>
