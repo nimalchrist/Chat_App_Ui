@@ -77,6 +77,10 @@
     text-align: right;
 }
 
+.highlighted {
+    background-color: #d9d9f9;
+}
+
 .message-left>p>span,
 .message-right>p>span {
     display: block;

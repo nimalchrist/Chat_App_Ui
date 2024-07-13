@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton, TextField } from "@mui/material";
+import axios from "axios";
+import useSnackBar from "../../hooks/useSnackBar";
+import { Search } from "@mui/icons-material";
 import useAuthentication from "../../hooks/useAuthentication";
 import useSocket from "../../hooks/useSocket";
 import MessageList from "./MessageList";
@@ -16,6 +19,13 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
   const [feedback, setFeedback] = useState<string>("");
   const messageContainerRef = useRef<HTMLUListElement>(null);
   const { authData, logout } = useAuthentication();
+  const { showMessage } = useSnackBar();
+
+  // search functionality
+  const [searchMode, setSearchMode] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<Message[]>([]);
+  const [currentSearchIndex, setCurrentSearchIndex] = useState(0);
 
   // Event handlers
   const handleSendMessage = (message: string) => {
@@ -73,6 +83,64 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
     }
   };
 
+  // search functionality
+  const handleSearchToggle = () => {
+    setSearchMode(!searchMode);
+    setSearchTerm("");
+    setSearchResults([]);
+    setCurrentSearchIndex(0);
+  };
+
+  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+    if (roomKey) {
+      try {
+        const response = await axios.post(
+          "http://localhost:4200/api/v1/rooms/search",
+          {
+            roomId: roomKey,
+            searchTerm: e.target.value,
+          }
+        );
+        setSearchResults(response.data);
+        setCurrentSearchIndex(0);
+      } catch (error: any) {
+        if (error.response) {
+          showMessage(
+            "Something went wrong. Please try again later",
+            "warning"
+          );
+        }
+      }
+    }
+  };
+
+  const scrollToSearchResult = (index: number) => {
+    const messageElements = messageContainerRef.current?.children;
+    if (messageElements && searchResults[index]) {
+      const messageElement = Array.from(messageElements).find(
+        (el) =>
+          el.textContent &&
+          el.textContent.includes(searchResults[index].message)
+      );
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  const handleNextSearchResult = () => {
+    if (searchResults.length > 0) {
+      const nextIndex = (currentSearchIndex + 1) % searchResults.length;
+      setCurrentSearchIndex(nextIndex);
+      scrollToSearchResult(nextIndex);
+    }
+  };
+
   // useEffect hooks
   useEffect(() => {
     if (socket && roomName) {
@@ -117,10 +185,33 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
           width: "80%",
         }}>
         <h2>{roomName}</h2>
-        <Button variant="contained" color="error" onClick={handleLogout}>
-          Logout
-        </Button>
+        <Box>
+          <IconButton onClick={handleSearchToggle}>
+            <Search />
+          </IconButton>
+          <Button variant="contained" color="error" onClick={handleLogout}>
+            Logout
+          </Button>
+        </Box>
       </Box>
+      {/* search Mode changes */}
+      {searchMode && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            margin: "10px auto",
+            width: "80%",
+          }}>
+          <TextField
+            fullWidth
+            placeholder="Search messages"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <Button onClick={handleNextSearchResult}>Next</Button>
+        </Box>
+      )}
       <Box className="chat-window">
         <Box className="chat-username">
           <span>
@@ -133,6 +224,8 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
           feedback={feedback}
           ref={messageContainerRef}
           userId={authData.user!._id}
+          currentSearchIndex={currentSearchIndex}
+          searchResults={searchResults}
         />
         <MessageForm
           userName={authData.user!.userName}
