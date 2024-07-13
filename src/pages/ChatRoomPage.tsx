@@ -11,7 +11,6 @@ import {
 import "../assets/styles/ChatRoom.css";
 import TextInput from "../components/text-components/TextInput";
 import useSnackBar from "../hooks/useSnackBar";
-import useAuthentication1 from "../hooks/useAuthentication";
 import axios from "axios";
 import CustomAppBar from "../components/appbar-components/CustomAppBar";
 
@@ -19,7 +18,6 @@ const ChatRoomPage = () => {
   const navigate = useNavigate();
   const [createRoomName, setCreateRoomName] = useState("");
   const [joinRoomName, setJoinRoomName] = useState("");
-  const { logout } = useAuthentication1();
   const { showMessage } = useSnackBar();
 
   // handlers
@@ -29,7 +27,7 @@ const ChatRoomPage = () => {
         const response = await axios(
           `http://localhost:4200/api/v1/rooms/create/${createRoomName}`
         );
-        if (response.status === 200) {
+        if (response.status === 201) {
           showMessage("Room created successfully", "success");
           navigate(`/home/${createRoomName}`);
           setCreateRoomName("");
