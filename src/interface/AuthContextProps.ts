@@ -1,6 +1,6 @@
 import UserData from "./UserData";
 
-export default interface AuthContextType {
+export default interface AuthContextProps {
   authData: {
     accessToken: string | null;
     refreshToken: string | null;
