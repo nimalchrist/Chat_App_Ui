@@ -1,101 +1,41 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
-import "../assets/styles/ChatRoom.css";
+import { Box, Button } from "@mui/material";
 import TextInput from "../components/text-components/TextInput";
-import useSnackBar from "../hooks/useSnackBar";
-import axios from "axios";
 import CustomAppBar from "../components/appbar-components/CustomAppBar";
+import ChatRoomList from "../components/chatroom-components/ChatRoomList";
+import useChatRoom from "../hooks/useChatRoom";
+import "../assets/styles/ChatRoom.css";
 
 const ChatRoomPage = () => {
   const navigate = useNavigate();
-  const [createRoomName, setCreateRoomName] = useState("");
-  const [joinRoomName, setJoinRoomName] = useState("");
-  const { showMessage } = useSnackBar();
+  const {
+    authData,
+    rooms,
+    createRoomName,
+    joinRoomName,
+    setCreateRoomName,
+    setJoinRoomName,
+    handleCreateRoom,
+    handleJoinRoom,
+    handleDeleteRoom,
+    handleLeaveRoom,
+  } = useChatRoom();
 
-  // handlers
-  const handleCreateRoom = async () => {
-    if (createRoomName) {
-      try {
-        const response = await axios(
-          `http://localhost:4200/api/v1/rooms/create/${createRoomName}`
-        );
-        if (response.status === 201) {
-          showMessage("Room created successfully", "success");
-          navigate(`/home/${createRoomName}`);
-          setCreateRoomName("");
-        }
-      } catch (error: any) {
-        if (error.response.status === 403) {
-          showMessage(
-            "Room name is already exist. Try to create a unique room",
-            "error"
-          );
-          setCreateRoomName("");
-        } else if (error.response.status === 401) {
-          showMessage("Room name is missing", "error");
-          setCreateRoomName("");
-        } else {
-          showMessage("something went wrong. Try again later", "error");
-          setCreateRoomName("");
-        }
-      }
-    }
-  };
-  const handleJoinRoom = async () => {
-    if (joinRoomName) {
-      try {
-        const response = await axios(
-          `http://localhost:4200/api/v1/rooms/join/${joinRoomName}`
-        );
-
-        if (response.status === 200) {
-          navigate(`/home/${joinRoomName}`);
-          setJoinRoomName("");
-        } else {
-          showMessage(
-            "The entered room is not available. Try creating a new room or Enter a valid room name",
-            "warning"
-          );
-          setJoinRoomName("");
-        }
-      } catch (error: any) {
-        if (error.response && error.response.status === 401) {
-          showMessage("Unauthorized access. Please log in.", "warning");
-        } else {
-          showMessage(
-            "The entered room is not available. Try creating a new room or enter a valid room name.",
-            "warning"
-          );
-        }
-        setJoinRoomName("");
-      }
-    }
+  const handleViewButtonClick = (roomName: string) => {
+    navigate(`/home/${roomName}`);
   };
   return (
     <>
       <CustomAppBar title="Chatify" />
       <Box className="chat-room-container">
         <Box className="chat-room-list">
-          <Typography variant="h5">Previous Rooms</Typography>
-          <List>
-            <ListItem>
-              <ListItemText primary="1" />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="2" />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="3" />
-            </ListItem>
-          </List>
+          <ChatRoomList
+            authData={authData}
+            rooms={rooms}
+            handleDeleteRoom={handleDeleteRoom}
+            handleLeaveRoom={handleLeaveRoom}
+            handleViewButtonClick={handleViewButtonClick}
+          />
         </Box>
         <Box className="chat-room">
           <Box className="room-fields-section">

@@ -15,13 +15,6 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     user: null,
   });
 
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("authData")!);
-    if (storedData) {
-      setAuthData(storedData);
-    }
-  }, []);
-
   const register = async (
     userName: string,
     email: string,
@@ -129,6 +122,13 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     setAuthData(data);
     localStorage.setItem("authData", JSON.stringify(data));
   };
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("authData")!);
+    if (storedData) {
+      setAuthData(storedData);
+    }
+  }, []);
 
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use(

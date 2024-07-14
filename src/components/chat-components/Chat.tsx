@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Box, IconButton } from "@mui/material";
 import {
   ArrowBack,
@@ -38,18 +38,18 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
   } = useChatSearch(roomKey!);
 
   // Event handlers
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTo(
         0,
         messageContainerRef.current.scrollHeight
       );
     }
-  };
+  }, [messageContainerRef]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, feedback]);
+  }, [messages, feedback, scrollToBottom]);
 
   if (!authData.user) {
     return <div>Loading...</div>;
