@@ -25,15 +25,13 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
   const { theme } = useThemeToggle();
   const { openMenu } = useDropDown();
 
-  const handleLeaveRoom = () => {
-    navigate("/home", { replace: true });
-  };
-
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     openMenu(event, [
       {
         label: "Leave Room",
-        onClick: handleLeaveRoom,
+        onClick: () => {
+          navigate("/home", { replace: true });
+        },
       },
     ]);
   };

@@ -104,16 +104,14 @@ const useChatRoom = () => {
 
   // supportive method to show customised error message
   const handleError = (error: any) => {
-    if (error.response && error.response.data) {
+    if (error.response && error.response.data  && error.response.status !== 401) {
       showMessage(error.response.data.message, "error");
     } else {
-      showMessage("An error occurred", "error");
+      showMessage("Login session expired. Please login to continue", "error");
     }
   };
 
   useEffect(() => {
-    console.log(1);
-    
     fetchRooms();
     const timer = setTimeout(() => {
       

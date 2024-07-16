@@ -9,8 +9,6 @@ const MessageForm: React.FC<MessageFormProps> = ({
   onFeedback,
 }) => {
   const [message, setMessage] = useState<string>("");
-
-  // callback for when the send message button is clicked or enter key is pressed
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {

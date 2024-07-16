@@ -1,10 +1,9 @@
-// components/Login/LoginForm.tsx
-import React from "react";
 import { Box, Button, Typography } from "@mui/material";
+import React from "react";
 import { Link } from "react-router-dom";
-import TextInput from "../text-components/TextInput";
-import LoginFormProps from "../../interface/LoginFormProps";
 import useThemeToggle from "../../hooks/useThemeToggle";
+import LoginFormProps from "../../interface/LoginFormProps";
+import TextInput from "../text-components/TextInput";
 
 const LoginForm: React.FC<LoginFormProps> = ({
   email,

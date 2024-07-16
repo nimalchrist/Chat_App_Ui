@@ -28,7 +28,7 @@ const ChatRoomPage = () => {
   };
   return (
     <>
-      <CustomAppBar title="Chatify" />
+      <CustomAppBar title="Chatify" userName={authData.user!.userName} />
       <Box
         className="chat-room-container"
         sx={{ backgroundColor: theme.palette.background.paper }}>

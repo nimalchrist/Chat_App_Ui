@@ -1,21 +1,38 @@
+import { AccountCircle } from "@mui/icons-material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import {
   AppBar,
   Box,
-  Button,
   IconButton,
   Toolbar,
-  Typography,
+  Typography
 } from "@mui/material";
 import React from "react";
 import useAuthentication from "../../hooks/useAuthentication";
+import useDropDown from "../../hooks/useDropDown";
 import useThemeToggle from "../../hooks/useThemeToggle";
 import CustomAppBarProps from "../../interface/CustomAppBarProps";
 
-const CustomAppBar: React.FC<CustomAppBarProps> = ({ title }) => {
+const CustomAppBar: React.FC<CustomAppBarProps> = ({ title, userName }) => {
   const { darkMode, toggleTheme, theme } = useThemeToggle();
   const { logout } = useAuthentication();
+  const { openMenu } = useDropDown();
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    openMenu(event, [
+      {
+        label: `Hi, ${userName}`,
+        onClick: () => {},
+      },
+      {
+        label: "Logout",
+        onClick: async () => {
+          await logout();
+        },
+      },
+    ]);
+  };
 
   return (
     <AppBar
@@ -44,16 +61,16 @@ const CustomAppBar: React.FC<CustomAppBarProps> = ({ title }) => {
             onClick={toggleTheme}>
             {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          <Button
-            color="secondary"
-            variant="contained"
-            disableElevation
-            sx={{ mx: 2, fontWeight: 700 }}
-            onClick={async () => {
-              await logout();
-            }}>
-            Logout
-          </Button>
+          <IconButton
+            size="large"
+            edge="end"
+            sx={{
+              color: "white",
+            }}
+            aria-label="toggle theme"
+            onClick={handleMenuOpen}>
+            <AccountCircle />
+          </IconButton>
         </Box>
       </Toolbar>
     </AppBar>

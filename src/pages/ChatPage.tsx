@@ -6,9 +6,11 @@ import CustomAppBar from "../components/appbar-components/CustomAppBar";
 import SwitchChatList from "../components/chat-components/SwitchChatList";
 import useThemeToggle from "../hooks/useThemeToggle";
 import "../assets/styles/Chat.css";
+import useAuthentication from "../hooks/useAuthentication";
 
 const ChatPage = () => {
   const navigate = useNavigate();
+  const { authData } = useAuthentication();
   const { roomId } = useParams<{ roomId: string }>();
   const { rooms } = useRoomSwitchList();
   const { theme } = useThemeToggle();
@@ -19,7 +21,7 @@ const ChatPage = () => {
 
   return (
     <>
-      <CustomAppBar title={roomId!} />
+      <CustomAppBar title={roomId!} userName={authData.user!.userName} />
       <Box
         className="chat-component"
         sx={{ backgroundColor: theme.palette.background.default }}>

@@ -7,7 +7,7 @@ import {
   Button,
   Typography,
   ListItemButton,
-  Divider, // Import Divider
+  Divider,
 } from "@mui/material";
 import { Delete, ExitToApp } from "@mui/icons-material";
 import { ChatRoomListProps } from "../../interface/ChatRoomListProps";

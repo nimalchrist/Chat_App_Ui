@@ -1,9 +1,9 @@
-import React from "react";
 import { Box, Button, Typography } from "@mui/material";
+import React from "react";
 import { Link } from "react-router-dom";
-import TextInput from "../text-components/TextInput";
-import SignupFormProps from "../../interface/SignupFormProps";
 import useThemeToggle from "../../hooks/useThemeToggle";
+import SignupFormProps from "../../interface/SignupFormProps";
+import TextInput from "../text-components/TextInput";
 
 const SignupForm: React.FC<SignupFormProps> = ({
   userName,

@@ -1,10 +1,9 @@
+import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
+import useSnackBar from "../../hooks/useSnackBar";
 import AuthProviderProps from "../../interface/AuthProviderProps";
 import AuthContext from "./AuthContext";
-import useSnackBar from "../../hooks/useSnackBar";
-import jwtDecode from "../../utils/jwtDecode";
-import axios from "axios";
 
 const AuthContextProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
@@ -15,6 +14,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     user: null,
   });
 
+  // registration controller
   const register = async (
     userName: string,
     email: string,
@@ -34,11 +34,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (error: any) {
       if (error.response) {
-        if (error.response.status === 401 || error.response.status === 400) {
-          showMessage(error.response.data.message, "error");
-        } else {
-          showMessage("An error occurred while logging in.", "error");
-        }
+        showMessage(error.response.data.message, "error");
       } else if (error.request) {
         showMessage(
           "No response from the server. Please try again later.",
@@ -50,6 +46,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  // login controller
   const login = async (email: string, password: string) => {
     try {
       const response = await axios.post(
@@ -63,11 +60,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (error: any) {
       if (error.response) {
-        if (error.response.status === 401 || error.response.status === 400) {
-          showMessage(error.response.data.message, "error");
-        } else {
-          showMessage("An error occurred while logging in.", "error");
-        }
+        showMessage(error.response.data.message, "error");
       } else if (error.request) {
         showMessage(
           "No response from the server. Please try again later.",
@@ -79,8 +72,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await axios.post("http://localhost:4200/api/v1/users/logout", {
         token: authData.refreshToken,
@@ -95,7 +87,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       showMessage("Server error occurred", "error");
     }
-  };
+  }, [authData.refreshToken, navigate, showMessage]);
 
   const refreshAccessToken = useCallback(async () => {
     try {
@@ -113,11 +105,12 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
       return response.data.accessToken;
     } catch (error) {
       console.error("Failed to refresh access token:", error);
-      logout();
+      await logout();
       return null;
     }
   }, [authData, logout]);
 
+  //helper function to store the authentication data
   const storeAuthData = (data: any) => {
     setAuthData(data);
     localStorage.setItem("authData", JSON.stringify(data));
@@ -134,15 +127,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     const requestInterceptor = axios.interceptors.request.use(
       async (config) => {
         if (authData.accessToken) {
-          const tokenExpDate = new Date(
-            jwtDecode(authData.accessToken).exp * 1000
-          );
-          if (tokenExpDate <= new Date()) {
-            const newAccessToken = await refreshAccessToken();
-            config.headers.Authorization = `Bearer ${newAccessToken}`;
-          } else {
-            config.headers.Authorization = `Bearer ${authData.accessToken}`;
-          }
+          config.headers.Authorization = `Bearer ${authData.accessToken}`;
         }
         return config;
       },
@@ -151,18 +136,16 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     const responseInterceptor = axios.interceptors.response.use(
       (response) => response,
       async (error) => {
+        const originalRequest = error.config;
         if (
           error.response &&
           error.response.status === 401 &&
           authData.refreshToken
         ) {
-          try {
-            const newAccessToken = await refreshAccessToken();
-            error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-            return axios(error.config);
-          } catch (refreshError) {
-            await logout();
-            return Promise.reject(refreshError);
+          const newAccessToken = await refreshAccessToken();
+          if (newAccessToken) {
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            return axios(originalRequest);
           }
         }
         return Promise.reject(error);
