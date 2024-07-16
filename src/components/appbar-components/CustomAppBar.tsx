@@ -1,31 +1,31 @@
-import React, { useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
+import React from "react";
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  IconButton,
+  Box,
+  Typography,
+} from "@mui/material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { useNavigate } from "react-router-dom";
 import useAuthentication from "../../hooks/useAuthentication";
+import useThemeToggle from "../../hooks/useThemeToggle";
 import CustomAppBarProps from "../../interface/CustomAppBarProps";
 
 const CustomAppBar: React.FC<CustomAppBarProps> = ({ title }) => {
+  const { darkMode, toggleTheme, theme } = useThemeToggle();
   const { logout } = useAuthentication();
-  //   const [darkMode, setDarkMode] = useState(false);
-
-  //   const handleThemeToggle = () => {
-  //     setDarkMode(!darkMode);
-  //   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      sx={{ backgroundColor: theme.palette.background.appBar }}>
       <Toolbar>
         <Typography
-          variant="h4"
+          variant="h5"
           component="div"
-          sx={{ flexGrow: 1, fontSize: "bold", fontWeight: "26px" }}>
+          sx={{ flexGrow: 1, fontWeight: "700", color: "white" }}>
           {title}
         </Typography>
         <Box
@@ -34,18 +34,21 @@ const CustomAppBar: React.FC<CustomAppBarProps> = ({ title }) => {
             alignItems: "center",
             p: "10px 16px",
           }}>
-          {/* <IconButton
+          <IconButton
             size="large"
             edge="end"
-            color="inherit"
+            sx={{
+              color: "white",
+            }}
             aria-label="toggle theme"
-            onClick={handleThemeToggle}>
+            onClick={toggleTheme}>
             {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton> */}
+          </IconButton>
           <Button
-            color="error"
+            color="secondary"
             variant="contained"
             disableElevation
+            sx={{ mx: 2, fontWeight: 700 }}
             onClick={async () => {
               await logout();
             }}>

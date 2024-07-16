@@ -5,6 +5,7 @@ export interface Room {
 }
 
 export default interface SwitchChatProps {
+  roomId: string;
   rooms: Room[];
   handleRoomClick: (roomName: string) => void;
 }

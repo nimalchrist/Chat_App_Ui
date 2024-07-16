@@ -1,14 +1,16 @@
 import { useState } from "react";
 import SignupForm from "../components/signup-components/SignupForm";
 import { validateEmail, validatePassword } from "../utils/validation";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import "../assets/styles/Signup.css";
 import useSnackBar from "../hooks/useSnackBar";
 import useAuthentication1 from "../hooks/useAuthentication";
+import useThemeToggle from "../hooks/useThemeToggle";
 
 const Signup = () => {
   const { register } = useAuthentication1();
   const { showMessage } = useSnackBar();
+  const { theme } = useThemeToggle();
   const [userName, setUserName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -38,8 +40,14 @@ const Signup = () => {
   };
 
   return (
-    <Box className="signup-component">
-      <h2>REGISTRATION</h2>
+    <Box
+      className="signup-component"
+      sx={{ backgroundColor: theme.palette.background.default }}>
+      <Typography
+        variant="h5"
+        sx={{ color: theme.palette.text.primary, fontWeight: 700 }}>
+        REGISTER
+      </Typography>
       <SignupForm
         userName={userName}
         setUserName={setUserName}

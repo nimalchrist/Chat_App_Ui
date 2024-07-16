@@ -1,9 +1,9 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import useAuthentication from "./useAuthentication";
 import useSnackBar from "./useSnackBar";
-import axios from "axios";
 
-const useRoomSwitch = () => {
+const useRoomSwitchList = () => {
   const { authData } = useAuthentication();
   const { showMessage } = useSnackBar();
   const [rooms, setRooms] = useState([]);
@@ -31,9 +31,13 @@ const useRoomSwitch = () => {
 
   useEffect(() => {
     fetchRooms();
+    const timer = setTimeout(() => {
+      fetchRooms();
+    }, 2000);
+    return () => clearTimeout(timer);
   }, [authData]);
 
   return { rooms };
 };
 
-export default useRoomSwitch;
+export default useRoomSwitchList;

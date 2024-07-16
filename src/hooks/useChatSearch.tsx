@@ -1,7 +1,7 @@
+import axios from "axios";
 import { useRef, useState } from "react";
 import Message from "../interface/Message";
 import useSnackBar from "./useSnackBar";
-import axios from "axios";
 
 const useChatSearch = (roomKey: string) => {
   const [searchMode, setSearchMode] = useState(false);
@@ -57,6 +57,9 @@ const useChatSearch = (roomKey: string) => {
           }
         );
         setSearchResults(response.data);
+        if (response.data.length === 0) {
+          showMessage("Search term not found in the chat history. ", "warning");
+        }
         setCurrentSearchIndex(0);
       } catch (error: any) {
         if (error.response) {
@@ -67,8 +70,8 @@ const useChatSearch = (roomKey: string) => {
         }
       }
     }
-    };
-    
+  };
+
   return {
     searchMode,
     searchTerm,

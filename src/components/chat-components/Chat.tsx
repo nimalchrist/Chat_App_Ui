@@ -1,20 +1,16 @@
+import { Box } from "@mui/material";
 import React, { useCallback, useEffect } from "react";
-import { Box, IconButton } from "@mui/material";
-import {
-  ArrowBack,
-  KeyboardArrowDown,
-  MoreVert,
-  Search,
-} from "@mui/icons-material";
-import MessageList from "./MessageList";
-import MessageForm from "./MessageForm";
-import ClientCount from "./ClientCount";
-import ChatProps from "../../interface/ChatProps";
-import ChatSearchField from "./ChatSearchField";
 import useChatMessages from "../../hooks/useChatMessages";
 import useChatSearch from "../../hooks/useChatSearch";
+import useThemeToggle from "../../hooks/useThemeToggle";
+import ChatProps from "../../interface/ChatProps";
+import ChatWindowHeader from "./ChatWindowHeader";
+import ClientCount from "./ClientCount";
+import MessageForm from "./MessageForm";
+import MessageList from "./MessageList";
 
 const Chat: React.FC<ChatProps> = ({ roomName }) => {
+  const { theme } = useThemeToggle();
   const {
     authData,
     roomKey,
@@ -26,14 +22,14 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
   } = useChatMessages(roomName!);
 
   const {
-    searchMode,
     searchTerm,
+    searchMode,
     searchResults,
     currentSearchIndex,
-    handleSearchToggle,
-    handleSearchInputChange,
-    handleSearchApiTrigger,
     handleNextSearchResult,
+    handleSearchApiTrigger,
+    handleSearchInputChange,
+    handleSearchToggle,
     messageContainerRef,
   } = useChatSearch(roomKey!);
 
@@ -57,56 +53,18 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
 
   return (
     <Box className="chat-container">
-      <Box className="chat-window">
-        <Box className="chat-username">
-          <span>
-            <i className="far fa-user"></i>
-          </span>
-          <h3 className="username">{authData.user!.userName}</h3>
-          <Box
-            sx={{
-              alignSelf: "flex-end",
-              display: "flex",
-              alignItems: "center",
-            }}>
-            <IconButton onClick={handleSearchToggle}>
-              <Search sx={{ fontSize: 26 }} />
-            </IconButton>
-            <IconButton onClick={() => {}}>
-              <MoreVert sx={{ fontSize: 26 }} />
-            </IconButton>
-          </Box>
-          {searchMode && (
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                backgroundColor: "white",
-                zIndex: 1,
-                boxShadow: 1,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                padding: "10px",
-              }}>
-              <IconButton onClick={handleSearchToggle}>
-                <ArrowBack sx={{ fontSize: 26 }} />
-              </IconButton>
-              <ChatSearchField
-                searchTerm={searchTerm}
-                handleSearchChange={handleSearchInputChange}
-              />
-              <IconButton onClick={handleSearchApiTrigger}>
-                <Search sx={{ fontSize: 26 }} />
-              </IconButton>
-              <IconButton onClick={handleNextSearchResult}>
-                <KeyboardArrowDown sx={{ fontSize: 26 }} />
-              </IconButton>
-            </Box>
-          )}
-        </Box>
+      <Box
+        className="chat-window"
+        sx={{ backgroundColor: theme.palette.background.chatWindow }}>
+        <ChatWindowHeader
+          authData={authData}
+          searchMode={searchMode}
+          searchTerm={searchTerm}
+          handleSearchToggle={handleSearchToggle}
+          handleNextSearchResult={handleNextSearchResult}
+          handleSearchApiTrigger={handleSearchApiTrigger}
+          handleSearchInputChange={handleSearchInputChange}
+        />
         <MessageList
           messages={messages}
           feedback={feedback}

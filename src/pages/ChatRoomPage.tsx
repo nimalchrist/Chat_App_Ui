@@ -5,9 +5,11 @@ import CustomAppBar from "../components/appbar-components/CustomAppBar";
 import ChatRoomList from "../components/chatroom-components/ChatRoomList";
 import useChatRoom from "../hooks/useChatRoom";
 import "../assets/styles/ChatRoom.css";
+import useThemeToggle from "../hooks/useThemeToggle";
 
 const ChatRoomPage = () => {
   const navigate = useNavigate();
+  const { theme } = useThemeToggle();
   const {
     authData,
     rooms,
@@ -27,7 +29,9 @@ const ChatRoomPage = () => {
   return (
     <>
       <CustomAppBar title="Chatify" />
-      <Box className="chat-room-container">
+      <Box
+        className="chat-room-container"
+        sx={{ backgroundColor: theme.palette.background.paper }}>
         <Box className="chat-room-list">
           <ChatRoomList
             authData={authData}
@@ -49,14 +53,20 @@ const ChatRoomPage = () => {
               {createRoomName && !joinRoomName && (
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <Button
-                    color="primary"
+                    color="secondary"
                     variant="contained"
+                    sx={{
+                      fontWeight: 700,
+                    }}
                     onClick={handleCreateRoom}>
                     Create Room
                   </Button>
                   <Button
-                    color="primary"
+                    color="secondary"
                     variant="contained"
+                    sx={{
+                      fontWeight: 700,
+                    }}
                     onClick={() => setCreateRoomName("")}>
                     Cancel
                   </Button>
@@ -74,13 +84,19 @@ const ChatRoomPage = () => {
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
+                    sx={{
+                      fontWeight: 700,
+                    }}
                     onClick={handleJoinRoom}>
                     Join Room
                   </Button>
                   <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
+                    sx={{
+                      fontWeight: 700,
+                    }}
                     onClick={() => setJoinRoomName("")}>
                     Cancel
                   </Button>

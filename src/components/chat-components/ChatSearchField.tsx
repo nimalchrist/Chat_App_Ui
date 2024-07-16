@@ -19,14 +19,6 @@ const ChatSearchField: React.FC<ChatSearchFieldProps> = ({
           height: 50,
         },
       }}
-      sx={{
-        "& .MuiInputBase-root": {
-          backgroundColor: "transparent",
-        },
-        "& .MuiInputBase-input::placeholder": {
-          color: "rgba(0, 0, 0, 0.5)",
-        },
-      }}
     />
   );
 };

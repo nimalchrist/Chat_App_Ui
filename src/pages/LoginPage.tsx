@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
-// import useAuthentication from "../hooks/useAuthentication";
+import { Box, Typography } from "@mui/material";
 import LoginForm from "../components/login-components/LoginForm";
 import { validateEmail, validatePassword } from "../utils/validation";
 import useSnackBar from "../hooks/useSnackBar";
+import useAuthentication from "../hooks/useAuthentication";
 import "../assets/styles/Login.css";
-import useAuthentication1 from "../hooks/useAuthentication";
+import useThemeToggle from "../hooks/useThemeToggle";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { showMessage } = useSnackBar();
-  const { login, authData } = useAuthentication1();
+  const { login, authData } = useAuthentication();
+  const { theme } = useThemeToggle();
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,15 +31,20 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
-
     if (authData.accessToken) {
       navigate("/home");
     }
   }, [authData.accessToken, navigate]);
 
   return (
-    <Box className="login-component">
-      <h2>LOGIN</h2>
+    <Box
+      className="login-component"
+      sx={{ backgroundColor: theme.palette.background.default }}>
+      <Typography
+        variant="h5"
+        sx={{ color: theme.palette.text.primary, fontWeight: 700 }}>
+        LOGIN
+      </Typography>
       <LoginForm
         email={email}
         setEmail={setEmail}

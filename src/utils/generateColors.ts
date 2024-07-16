@@ -1,8 +1,8 @@
-import Theme from "./Theme";
+import randomColorGeneratorMode from "./randomColorGeneratorMode";
 
 const generateColors = (
   totalUsers: number,
-  theme: Theme
+  theme: randomColorGeneratorMode
 ): { [key: number]: string } => {
   const colors: { [key: number]: string } = {};
 
@@ -11,7 +11,9 @@ const generateColors = (
     const saturation = 70; // fixed saturation
     // alternating lightness between 20 to 30 for dark theme and 50 to 70 for light theme
     const lightness =
-      theme === Theme.Light ? 50 + (i % 2) * 20 : 30 - (i % 2) * 10;
+      theme === randomColorGeneratorMode.Light
+        ? 50 + (i % 2) * 20
+        : 30 - (i % 2) * 10;
 
     colors[i] = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }

@@ -1,8 +1,9 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import TextInput from "../text-components/TextInput";
 import SignupFormProps from "../../interface/SignupFormProps";
+import useThemeToggle from "../../hooks/useThemeToggle";
 
 const SignupForm: React.FC<SignupFormProps> = ({
   userName,
@@ -15,8 +16,11 @@ const SignupForm: React.FC<SignupFormProps> = ({
   setConfirmPassword,
   handleSignupSubmit,
 }) => {
+  const { theme } = useThemeToggle();
   return (
-    <Box className="input-fields">
+    <Box
+      className="input-fields"
+      sx={{ backgroundColor: theme.palette.background.paper }}>
       <form onSubmit={handleSignupSubmit} className="form-container">
         <TextInput
           label="UserName"
@@ -45,14 +49,25 @@ const SignupForm: React.FC<SignupFormProps> = ({
         <Button
           type="submit"
           variant="contained"
-          color="primary"
+          color="secondary"
           className="signup-btn">
           Signup
         </Button>
       </form>
-      <p>
-        Already have an account? <Link to="/">Login</Link>
-      </p>
+      <Typography variant="inherit" sx={{ color: theme.palette.text.primary }}>
+        Already have an account?{" "}
+        <Link
+          to="/"
+          style={{
+            color:
+              theme.palette.mode === "dark"
+                ? theme.palette.text.primary
+                : theme.palette.primary.main,
+            textDecoration: "none",
+          }}>
+          Login
+        </Link>
+      </Typography>
     </Box>
   );
 };

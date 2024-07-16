@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import React, { useState } from "react";
 import MessageFormProps from "../../interface/MessageFormProps";
+import ChatSendField from "./ChatSendField";
 
 const MessageForm: React.FC<MessageFormProps> = ({
   userName,
@@ -21,22 +22,19 @@ const MessageForm: React.FC<MessageFormProps> = ({
 
   return (
     <form className="message-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Enter message to send"
-        value={message}
-        onChange={(e) => {
-          setMessage(e.target.value);
-          onFeedback(`${userName} is typing...`);
-        }}
-        onFocus={() => onFeedback(`${userName} is typing...`)}
-        onBlur={() => onFeedback("")}
-        className="message-input"
+      <ChatSendField
+        userName={userName}
+        message={message}
+        setMessage={setMessage}
+        onFeedback={onFeedback}
       />
       <Button
         type="submit"
         variant="contained"
-        color="info"
+        color="secondary"
+        sx={{
+          fontWeight: "bold",
+        }}
         className="send-button">
         send
         <span>

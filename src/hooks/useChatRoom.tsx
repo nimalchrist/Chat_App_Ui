@@ -112,7 +112,14 @@ const useChatRoom = () => {
   };
 
   useEffect(() => {
+    console.log(1);
+    
     fetchRooms();
+    const timer = setTimeout(() => {
+      
+      fetchRooms();
+    }, 3000);
+    return () => clearTimeout(timer);
   }, [authData]);
 
   return {
