@@ -1,14 +1,14 @@
-import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Button,
-  IconButton,
-  Box,
-  Typography,
-} from "@mui/material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import React from "react";
 import useAuthentication from "../../hooks/useAuthentication";
 import useThemeToggle from "../../hooks/useThemeToggle";
 import CustomAppBarProps from "../../interface/CustomAppBarProps";

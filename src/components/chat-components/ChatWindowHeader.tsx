@@ -5,10 +5,12 @@ import {
   Search,
 } from "@mui/icons-material";
 import { Box, IconButton, Typography } from "@mui/material";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import useDropDown from "../../hooks/useDropDown";
 import useThemeToggle from "../../hooks/useThemeToggle";
 import ChatWindowHeaderProps from "../../interface/ChatWindowHeaderProps";
 import ChatSearchField from "./ChatSearchField";
-
 
 const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
   authData,
@@ -19,7 +21,23 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
   handleSearchApiTrigger,
   handleNextSearchResult,
 }) => {
+  const navigate = useNavigate();
   const { theme } = useThemeToggle();
+  const { openMenu } = useDropDown();
+
+  const handleLeaveRoom = () => {
+    navigate("/home", { replace: true });
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    openMenu(event, [
+      {
+        label: "Leave Room",
+        onClick: handleLeaveRoom,
+      },
+    ]);
+  };
+
   return (
     <Box className="chat-username" sx={{ color: theme.palette.text.primary }}>
       <span>
@@ -40,7 +58,7 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
         <IconButton onClick={handleSearchToggle}>
           <Search sx={{ fontSize: 26 }} />
         </IconButton>
-        <IconButton onClick={() => {}}>
+        <IconButton onClick={handleMenuOpen}>
           <MoreVert sx={{ fontSize: 26 }} />
         </IconButton>
       </Box>
@@ -77,4 +95,5 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
     </Box>
   );
 };
+
 export default ChatWindowHeader;

@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
+import ThemeContextProvider from "./contexts/ThemeContext/ThemeContextProvider";
+import useThemeToggle from "./hooks/useThemeToggle";
+import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppRouter from "./routes/AppRouter";
-import useThemeToggle from "./hooks/useThemeToggle";
-import ThemeContextProvider from "./contexts/ThemeContext/ThemeContextProvider";
-import "./index.css";
 
 const Root: React.FC = () => {
   const { darkMode } = useThemeToggle();
