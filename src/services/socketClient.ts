@@ -1,10 +1,10 @@
 import { io, Socket } from "socket.io-client";
-import refreshAccessToken from "./refreshAccessToken";
+import refreshAccessToken from "../utils/refreshAccessToken";
 
 const initialiseSocket = async (path: string): Promise<Socket | null> => {
   return new Promise(async (resolve, reject) => {
     let storedData = JSON.parse(localStorage.getItem("authData")!);
-    let token = storedData?.accessToken;
+    let token = storedData!.accessToken;
     if (!token) {
       resolve(null);
       return;
@@ -17,25 +17,21 @@ const initialiseSocket = async (path: string): Promise<Socket | null> => {
       resolve(socket);
     });
     socket.on("disconnect", async () => {
-      console.log("i am called");
-
+      resolve(null);
+    });
+    socket.on("connect_error", async (error) => {
       token = await refreshAccessToken();
       if (token) {
         storedData = JSON.parse(localStorage.getItem("authData")!);
         const newSocket: Socket = io("http://localhost:4200", {
-          auth: { token: storedData.accessToken },
+          auth: { token },
           query: { path },
         });
         resolve(newSocket);
       } else {
-        console.log("token ae error da");
-
+        window.location.href = "/";
         resolve(null);
       }
-    });
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-      resolve(null);
     });
   });
 };

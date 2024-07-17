@@ -1,5 +1,5 @@
-import { ReactNode, useState } from "react";
 import { Alert, Snackbar } from "@mui/material";
+import { ReactNode, useState } from "react";
 import SnackBarContext from "./SnackBarContext";
 
 const SnackBarProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

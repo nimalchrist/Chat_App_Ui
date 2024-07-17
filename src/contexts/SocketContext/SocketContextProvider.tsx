@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import SocketContext from "./SocketContext";
 import SocketProviderProps from "../../interface/SocketProviderProps";
-import initialiseSocket from "../../utils/initialiseSocket";
+import initialiseSocket from "../../services/socketClient";
+import SocketContext from "./SocketContext";
 
 const SocketContextProvider = ({ children }: SocketProviderProps) => {
   const navigate = useNavigate();

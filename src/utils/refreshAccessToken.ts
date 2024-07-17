@@ -1,16 +1,11 @@
-import axios from "axios";
+import { refreshAccessToken as accessTokenAPI } from "../services/apiClient";
 
 const refreshAccessToken = async () => {
   const storedData = JSON.parse(localStorage.getItem("authData")!);
+  if (!storedData) return null;
   if (!storedData!.refreshToken) return null;
-
   try {
-    const response = await axios.post(
-      "http://localhost:4200/api/v1/users/token",
-      {
-        token: storedData.refreshToken,
-      }
-    );
+    const response = await accessTokenAPI(storedData.refreshToken);
     const newAuthData = {
       ...storedData,
       accessToken: response.data.accessToken,

@@ -100,3 +100,7 @@ export const leaveRoom = async (roomId: string, userId: string) => {
 export const searchMessages = (roomId: string, searchTerm: string) => {
   return apiClient.post("/rooms/search", { roomId, searchTerm });
 };
+
+export const refreshAccessToken = (token: string) => {
+  return apiClient.post("/users/token", { token });
+};
