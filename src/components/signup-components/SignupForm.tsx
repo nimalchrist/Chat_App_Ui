@@ -16,6 +16,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
   setConfirmPassword,
   handleSignupSubmit,
 }) => {
+  // theme toggler hook to toggle between dark and light theme
   const { theme } = useThemeToggle();
   return (
     <Box

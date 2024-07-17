@@ -3,6 +3,7 @@ import { fetchRooms as fetchRoomsAPI } from "../services/apiClient";
 import useAuthentication from "./useAuthentication";
 import useSnackBar from "./useSnackBar";
 
+// custom hook to handle the room switching logic
 const useRoomSwitchList = () => {
   const { authData } = useAuthentication();
   const { showMessage } = useSnackBar();

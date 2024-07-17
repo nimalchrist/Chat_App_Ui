@@ -1,5 +1,6 @@
 import { refreshAccessToken as accessTokenAPI } from "../services/apiClient";
 
+// refreshing the accessToken logic
 const refreshAccessToken = async () => {
   const storedData = JSON.parse(localStorage.getItem("authData")!);
   if (!storedData) return null;

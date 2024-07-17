@@ -1,5 +1,6 @@
 import randomColorGeneratorMode from "./randomColorGeneratorMode";
 
+// generate the random colors based on the number of active users
 const generateColors = (
   totalUsers: number,
   theme: randomColorGeneratorMode

@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import refreshAccessToken from "../utils/refreshAccessToken";
 
+// service layer for socketServer
 const initialiseSocket = async (path: string): Promise<Socket | null> => {
   return new Promise(async (resolve, reject) => {
     let storedData = JSON.parse(localStorage.getItem("authData")!);

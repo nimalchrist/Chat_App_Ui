@@ -8,6 +8,8 @@ import SocketContext from "./SocketContext";
 const SocketContextProvider = ({ children }: SocketProviderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // socket and setSocket is shared amoung the consumer components.
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const initialiseSocketConnection = useCallback(async () => {

@@ -3,6 +3,7 @@ import Message from "../interface/Message";
 import { searchMessages as searcnMessagesAPI } from "../services/apiClient";
 import useSnackBar from "./useSnackBar";
 
+// custom hook to handle the chat search functionality
 const useChatSearch = (roomKey: string) => {
   const [searchMode, setSearchMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,6 +12,7 @@ const useChatSearch = (roomKey: string) => {
   const messageContainerRef = useRef<HTMLUListElement>(null);
   const { showMessage } = useSnackBar();
 
+  // search mode toggler
   const handleSearchToggle = () => {
     setSearchMode(!searchMode);
     setSearchTerm("");
@@ -18,12 +20,14 @@ const useChatSearch = (roomKey: string) => {
     setCurrentSearchIndex(0);
   };
 
+  // getting the input
   const handleSearchInputChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setSearchTerm(e.target.value);
   };
 
+  // scrolling to the search results based on search array and index
   const scrollToSearchResult = (index: number) => {
     const messageElements = messageContainerRef.current?.children;
     if (messageElements && searchResults[index]) {
@@ -38,6 +42,7 @@ const useChatSearch = (roomKey: string) => {
     }
   };
 
+  // iterating over the search array to iterate
   const handleNextSearchResult = () => {
     if (searchResults.length > 0) {
       const nextIndex = (currentSearchIndex + 1) % searchResults.length;
@@ -46,6 +51,7 @@ const useChatSearch = (roomKey: string) => {
     }
   };
 
+  // handler for triggering the api after the search term is got
   const handleSearchApiTrigger = async () => {
     if (roomKey && searchTerm) {
       try {

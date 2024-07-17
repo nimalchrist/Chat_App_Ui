@@ -1,8 +1,10 @@
+// to validate the email
 export const validateEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
+// to validate the password
 export const validatePassword = (
   password: string
 ): { isValid: boolean; message: string } => {

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import useSocket from "./useSocket";
 import Message from "../interface/Message";
 import useAuthentication from "./useAuthentication";
+import useSocket from "./useSocket";
 
+// custom hook to simplify the chat messages handling in the Chat.tsx component
 const useChatMessages = (roomName: string) => {
   const { socket } = useSocket();
   const [roomKey, setRoomKey] = useState<string | null>(null);
@@ -11,6 +12,7 @@ const useChatMessages = (roomName: string) => {
   const [feedback, setFeedback] = useState<string>("");
   const { authData } = useAuthentication();
 
+  // handler for sending message
   const handleSendMessage = (message: string) => {
     if (!socket || !roomKey) return;
 
@@ -23,12 +25,14 @@ const useChatMessages = (roomName: string) => {
     socket.emit("message", newMessage, roomKey);
   };
 
+  // handler for feedback
   const handleFeedback = (feedback: string) => {
     if (socket && roomKey) {
       socket.emit("feedback", { feedback, roomId: roomKey });
     }
   };
 
+  // handler for received message
   const handleChatMessage = (receivedMessage: Message) => {
     setMessages((prevMessages) => [...prevMessages, receivedMessage]);
   };

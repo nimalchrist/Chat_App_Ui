@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import SnackBarContext from "../contexts/SnackBarContext/SnackBarContext";
 
+// custom hook to simplify the access of scnackbar provider component
 const useSnackBar = () => {
   const context = useContext(SnackBarContext);
   if (!context) {

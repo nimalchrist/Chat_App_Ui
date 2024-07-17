@@ -2,6 +2,7 @@ import { TextField } from "@mui/material";
 import ChatSearchFieldProps from "../../interface/ChatSearchFieldProps";
 import React from "react";
 
+// custom chat search field
 const ChatSearchField: React.FC<ChatSearchFieldProps> = ({
   searchTerm,
   handleSearchChange,

@@ -20,6 +20,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
   handleLeaveRoom,
   handleViewButtonClick,
 }) => {
+  // theme toggler hook to toggle between dark and light theme
   const { theme } = useThemeToggle();
 
   return (
@@ -86,7 +87,6 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
                 </ListItemIcon>
               </ListItemButton>
               {index < rooms.length - 1 && <Divider />}{" "}
-              {/* Add Divider except for last item */}
             </React.Fragment>
           ))}
         </List>

@@ -13,6 +13,7 @@ const SnackBarProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     open: false,
   });
 
+  // the function will be shared among the consumer components
   const showMessage = (
     message: string,
     severity: "success" | "error" | "warning" | "info" = "info"

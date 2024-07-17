@@ -8,7 +8,10 @@ const MessageForm: React.FC<MessageFormProps> = ({
   onSendMessage,
   onFeedback,
 }) => {
+  // state variable to maintain the current message.
   const [message, setMessage] = useState<string>("");
+
+  // handler to chat send button click
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {

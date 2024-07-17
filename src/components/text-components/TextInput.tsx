@@ -2,6 +2,7 @@ import { TextField } from "@mui/material";
 import React from "react";
 import TextInputProps from "../../interface/TextInputProps";
 
+// custom text input
 const TextInput: React.FC<TextInputProps> = ({
   label,
   type,

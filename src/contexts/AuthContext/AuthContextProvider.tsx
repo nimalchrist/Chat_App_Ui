@@ -64,6 +64,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  // logout controller
   const logout = useCallback(async () => {
     try {
       await logoutUser(authData.refreshToken!);
@@ -78,7 +79,6 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
       showMessage("Server error occurred", "error");
     }
   }, [authData.refreshToken, navigate, showMessage]);
-
 
   //helper function to store the authentication data
   const storeAuthData = (data: any) => {

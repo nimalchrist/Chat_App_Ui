@@ -7,6 +7,7 @@ import randomColorGeneratorMode from "../../utils/randomColorGeneratorMode";
 
 const MessageList = forwardRef<HTMLUListElement, MessageListProps>(
   ({ messages, feedback, userId, currentSearchIndex, searchResults }, ref) => {
+    // theme toggler hook to toggle between dark and light theme
     const { darkMode, theme } = useThemeToggle();
 
     // Get the unique userId's
@@ -65,7 +66,7 @@ const MessageList = forwardRef<HTMLUListElement, MessageListProps>(
           );
         })}
         {feedback && (
-          // If feedback is provided, render it as a special <li> element
+          // If feedback is provided render <li> element
           <li
             className="message-feedback"
             style={{ color: theme.palette.text.primary }}>

@@ -7,6 +7,7 @@ const MenuProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItemType[]>([]);
 
+  // to open the menu
   const openMenu = (
     event: React.MouseEvent<HTMLElement>,
     items: MenuItemType[]

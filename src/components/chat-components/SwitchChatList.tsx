@@ -1,23 +1,27 @@
-import React, { useState } from "react";
+import ChatIcon from "@mui/icons-material/Chat";
 import {
-  ListItemButton,
-  ListItemText,
   Divider,
+  ListItemButton,
   ListItemIcon,
+  ListItemText,
   Typography,
 } from "@mui/material";
-import ChatIcon from "@mui/icons-material/Chat";
-import SwitchChatProps from "../../interface/SwitchChatProps";
+import React, { useState } from "react";
 import useThemeToggle from "../../hooks/useThemeToggle";
+import SwitchChatProps from "../../interface/SwitchChatProps";
 
 const SwitchChatList: React.FC<SwitchChatProps> = ({
   roomId,
   rooms,
   handleRoomClick,
 }) => {
+  // theme toggler hook to toggle between dark and light theme
   const { theme } = useThemeToggle();
+
+  // state variable to track the active room
   const [activeRoom, setActiveRoom] = useState<string>(roomId);
 
+  // handler for switch between rooms
   const handleRoomSelection = (roomName: string) => {
     setActiveRoom(roomName);
     handleRoomClick(roomName);

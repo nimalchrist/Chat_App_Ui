@@ -10,7 +10,10 @@ import MessageForm from "./MessageForm";
 import MessageList from "./MessageList";
 
 const Chat: React.FC<ChatProps> = ({ roomName }) => {
+  // theme toggler hook to toggle between dark and light theme
   const { theme } = useThemeToggle();
+
+  // chat messages hook to handle all the functionalities of the chat sending receiving activities
   const {
     authData,
     roomKey,
@@ -21,6 +24,7 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
     handleFeedback,
   } = useChatMessages(roomName!);
 
+  // chat search hook to provide the chat history searching functionality
   const {
     searchTerm,
     searchMode,
@@ -33,7 +37,6 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
     messageContainerRef,
   } = useChatSearch(roomKey!);
 
-  // Event handlers
   const scrollToBottom = useCallback(() => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTo(
@@ -43,10 +46,12 @@ const Chat: React.FC<ChatProps> = ({ roomName }) => {
     }
   }, [messageContainerRef]);
 
+  // useEffect hook to provide the chat scrolling functionality
   useEffect(() => {
     scrollToBottom();
   }, [messages, feedback, scrollToBottom]);
 
+  // if authData still not set
   if (!authData.user) {
     return <div>Loading...</div>;
   }

@@ -1,6 +1,7 @@
 import { TextField } from "@mui/material";
 import ChatSendFieldProps from "../../interface/ChatSendFieldProps";
 
+// customised chat send field component
 const ChatSendField: React.FC<ChatSendFieldProps> = ({
   userName,
   message,
@@ -20,6 +21,7 @@ const ChatSendField: React.FC<ChatSendFieldProps> = ({
       onBlur={() => onFeedback("")}
       className="message-input"
       variant="outlined"
+      // overriding the default mui library colors.
       InputProps={{
         sx: {
           height: 50,

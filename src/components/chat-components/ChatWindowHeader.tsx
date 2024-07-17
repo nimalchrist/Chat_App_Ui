@@ -21,10 +21,12 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
   handleSearchApiTrigger,
   handleNextSearchResult,
 }) => {
+  // custom hooks
   const navigate = useNavigate();
   const { theme } = useThemeToggle();
   const { openMenu } = useDropDown();
 
+  // handler for menu open button click
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     openMenu(event, [
       {
@@ -60,6 +62,7 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
           <MoreVert sx={{ fontSize: 26 }} />
         </IconButton>
       </Box>
+      {/* if searchMode === true then render the overlay with icons */}
       {searchMode && (
         <Box
           sx={{
@@ -78,6 +81,7 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({
           <IconButton onClick={handleSearchToggle}>
             <ArrowBack sx={{ fontSize: 26 }} />
           </IconButton>
+          {/* custom search text field */}
           <ChatSearchField
             searchTerm={searchTerm}
             handleSearchChange={handleSearchInputChange}

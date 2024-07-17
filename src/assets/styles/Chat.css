@@ -15,6 +15,7 @@
     transition: background-color 0.5s ease;
 }
 
+/* room list component */
 .chat-component .switch-rooms-list {
     max-height: auto;
     width: 25%;
@@ -23,6 +24,7 @@
     transition: background-color 0.5s ease;
 }
 
+/* chat container component */
 .chat-component .chat-container {
     width: 50%;
     flex: 2;
@@ -68,6 +70,7 @@
     height: calc(100% - 108px);
 }
 
+/* sender and receiver messages */
 .message-left,
 .message-right {
     list-style: none;
@@ -92,6 +95,7 @@
     text-align: right;
 }
 
+/* search term highlighter */
 .highlighted {
     background-color: #146eb4 !important;
 }
@@ -111,6 +115,7 @@
     text-align: center;
 }
 
+/* message send field */
 .message-form {
     display: flex;
     flex-direction: row;
@@ -118,21 +123,18 @@
     width: 100%;
     height: 48px;
 }
-
 .send-button {
     flex-basis: 28%;
     font-size: 16px;
     border: none;
     outline: none;
 }
-
 .send-button>span {
     margin-left: 5px;
 }
 
 .clients-total {
     margin: 20px auto;
-    color: #7e7e7e;
 }
 
 /* laptop screen */

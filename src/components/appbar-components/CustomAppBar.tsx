@@ -1,13 +1,7 @@
 import { AccountCircle } from "@mui/icons-material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
-import {
-  AppBar,
-  Box,
-  IconButton,
-  Toolbar,
-  Typography
-} from "@mui/material";
+import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import useAuthentication from "../../hooks/useAuthentication";
 import useDropDown from "../../hooks/useDropDown";
@@ -15,10 +9,16 @@ import useThemeToggle from "../../hooks/useThemeToggle";
 import CustomAppBarProps from "../../interface/CustomAppBarProps";
 
 const CustomAppBar: React.FC<CustomAppBarProps> = ({ title, userName }) => {
+  // theme toggler hook to toggle between dark and light theme
   const { darkMode, toggleTheme, theme } = useThemeToggle();
+
+  // authentication hook to provide logout functionality (Context API)
   const { logout } = useAuthentication();
+
+  // dropdown hook to provide the menu open and closing functionality
   const { openMenu } = useDropDown();
 
+  // handler for menu open button click
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     openMenu(event, [
       {

@@ -7,13 +7,16 @@ import ThemeContextProviderProps from "../../interface/ThemeContextProviderProps
 const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
   children,
 }) => {
+  // global state variable to keep track of light and dark mode
   const [darkMode, setDarkMode] = useState(false);
 
+  // apply the theme based on the mode
   const theme: Theme = useMemo(
     () => (darkMode ? darkTheme : lightTheme),
     [darkMode]
   );
 
+  // toggler to toggle between the themes
   const toggleTheme = () => {
     setDarkMode(!darkMode);
   };

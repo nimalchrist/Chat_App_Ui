@@ -12,6 +12,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   setPassword,
   handleLoginSubmit,
 }) => {
+  // theme toggler hook to toggle between dark and light theme
   const { theme } = useThemeToggle();
   return (
     <Box
