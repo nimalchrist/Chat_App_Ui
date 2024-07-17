@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { ThemeProvider as MuiThemeProvider, Theme } from "@mui/material/styles";
-import { lightTheme, darkTheme } from "../../utils/theme";
+import { lightTheme, darkTheme } from "../../utils/Theme";
 import ThemeContext from "./ThemeContext";
 import ThemeContextProviderProps from "../../interface/ThemeContextProviderProps";
 
