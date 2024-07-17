@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useRef, useState } from "react";
 import Message from "../interface/Message";
+import { searchMessages as searcnMessagesAPI } from "../services/apiClient";
 import useSnackBar from "./useSnackBar";
 
 const useChatSearch = (roomKey: string) => {
@@ -49,13 +49,7 @@ const useChatSearch = (roomKey: string) => {
   const handleSearchApiTrigger = async () => {
     if (roomKey && searchTerm) {
       try {
-        const response = await axios.post(
-          "http://localhost:4200/api/v1/rooms/search",
-          {
-            roomId: roomKey,
-            searchTerm: searchTerm,
-          }
-        );
+        const response = await searcnMessagesAPI(roomKey, searchTerm);
         setSearchResults(response.data);
         if (response.data.length === 0) {
           showMessage("Search term not found in the chat history. ", "warning");

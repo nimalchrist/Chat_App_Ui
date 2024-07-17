@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { fetchRooms as fetchRoomsAPI } from "../services/apiClient";
 import useAuthentication from "./useAuthentication";
 import useSnackBar from "./useSnackBar";
 
@@ -11,11 +11,7 @@ const useRoomSwitchList = () => {
   const fetchRooms = async () => {
     if (authData && authData.user) {
       try {
-        const response = await axios.post(
-          "http://localhost:4200/api/v1/rooms/get-rooms",
-          { userId: authData.user._id },
-          { headers: { Authorization: `Bearer ${authData.accessToken}` } }
-        );
+        const response = await fetchRoomsAPI(authData.user._id);
         if (response.status === 200) {
           setRooms(response.data.listOfRooms);
         }

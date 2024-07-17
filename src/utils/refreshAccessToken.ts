@@ -2,7 +2,7 @@ import axios from "axios";
 
 const refreshAccessToken = async () => {
   const storedData = JSON.parse(localStorage.getItem("authData")!);
-  if (!storedData?.refreshToken) return null;
+  if (!storedData!.refreshToken) return null;
 
   try {
     const response = await axios.post(

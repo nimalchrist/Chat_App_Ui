@@ -17,6 +17,8 @@ const initialiseSocket = async (path: string): Promise<Socket | null> => {
       resolve(socket);
     });
     socket.on("disconnect", async () => {
+      console.log("i am called");
+
       token = await refreshAccessToken();
       if (token) {
         storedData = JSON.parse(localStorage.getItem("authData")!);
@@ -26,6 +28,8 @@ const initialiseSocket = async (path: string): Promise<Socket | null> => {
         });
         resolve(newSocket);
       } else {
+        console.log("token ae error da");
+
         resolve(null);
       }
     });
