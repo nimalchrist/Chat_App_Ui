@@ -3,12 +3,16 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import useAuthentication from "../../hooks/useAuthentication";
 import useDropDown from "../../hooks/useDropDown";
 import useThemeToggle from "../../hooks/useThemeToggle";
 import CustomAppBarProps from "../../interface/CustomAppBarProps";
 
 const CustomAppBar: React.FC<CustomAppBarProps> = ({ title, userName }) => {
+  // navigation hook
+  const navigate = useNavigate();
+
   // theme toggler hook to toggle between dark and light theme
   const { darkMode, toggleTheme, theme } = useThemeToggle();
 
@@ -40,6 +44,9 @@ const CustomAppBar: React.FC<CustomAppBarProps> = ({ title, userName }) => {
       sx={{ backgroundColor: theme.palette.background.appBar }}>
       <Toolbar>
         <Typography
+          onClick={() => {
+            navigate("/");
+          }}
           variant="h5"
           component="div"
           sx={{ flexGrow: 1, fontWeight: "700", color: "white" }}>
