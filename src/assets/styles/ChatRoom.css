@@ -1,49 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
+
+/* desktop and laptop */
+.chat-room-container {
+    display: flex;
+    justify-content: space-between;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    flex-wrap: wrap;
+    margin: 100px auto;
+    width: 80%;
+}
+
+/* past rooms list */
+.chat-room-list {
+    width: 30%;
+    border-radius: 5px;
+    padding: 20px;
+}
+
 .chat-room {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-}
-
-.title {
-    font-size: 2em;
-    margin-bottom: 20px;
-}
-
-.create-room,
-.join-room {
-    margin-bottom: 20px;
-}
-
-.create-room input,
-.join-room input {
-    outline: none;
+    width: 60%;
+    height: auto;
     padding: 10px;
-    margin-right: 10px;
-    font-size: 1em;
+    border-radius: 5px;
 }
 
-.create-room button,
-.join-room button {
-    outline: none;
-    border: none;
-    background-color: #3d68f3;
-    color: white;
-    padding: 10px;
-    font-size: 1em;
-    margin: 10px 8px;
-    border-radius: 4px;
+.chat-room h4 {
+    font-family: "Open Sans", sans-serif;
 }
 
-/* 
-initialize socket called SocketContextProvider.tsx:41
-Loaded new content contentScript.js:6
-expected to be called at the time of homepage loading and chat ui loading  useAuthenticatedUser.tsx:11  
-initialize socket called SocketContextProvider.tsx:41
-*/
+.chat-room .room-fields-section {
+    width: 80%;
+    padding: 10px 30px;
+}
 
-/* 
-expected to be called at the time of homepage loading and chat ui loading useAuthenticatedUser.tsx:11 
-2 initialize socket called SocketContextProvider.tsx:41
-Loaded new content contentScript.js:6
-*/
+.room-fields-section .create-room-section button {
+    margin: 10px 20px;
+}
+
+.room-fields-section .join-room-section button {
+    margin: 10px 20px;
+}
+
+/* responsive design */
+/* tablet */
+@media (max-width: 768px) {
+    .chat-room-container {
+        width: 90%;
+    }
+
+    .chat-room-list {
+        width: 100%;
+    }
+
+    .chat-room {
+        width: 100%;
+    }
+
+    .chat-room .room-fields-section {
+        width: 80%;
+    }
+}
+
+/* mobile */
+@media (max-width: 488px) {
+    .chat-room-container {
+        width: 90%;
+    }
+
+    .chat-room-list {
+        width: 100%;
+    }
+
+    .chat-room {
+        width: 100%;
+    }
+
+    .chat-room .room-fields-section {
+        width: 100%;
+    }
+}

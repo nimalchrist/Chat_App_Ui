@@ -1,79 +1,66 @@
 import { useState } from "react";
+import SignupForm from "../components/signup-components/SignupForm";
+import { validateEmail, validatePassword } from "../utils/validation";
+import { Box, Typography } from "@mui/material";
 import "../assets/styles/Signup.css";
-import { Link } from "react-router-dom";
-import useAuthentication from "../hooks/useAuthentication";
+import useSnackBar from "../hooks/useSnackBar";
+import useAuthentication1 from "../hooks/useAuthentication";
+import useThemeToggle from "../hooks/useThemeToggle";
 
 const Signup = () => {
-  const { register } = useAuthentication();
+  const { register } = useAuthentication1();
+  const { showMessage } = useSnackBar();
+  const { theme } = useThemeToggle();
   const [userName, setUserName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const handleSignupSubmit = (e: any) => {
+  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!userName.trim()) {
-      alert("Username is required");
+      showMessage("Username is required", "warning");
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert("Invalid email format");
+    if (!validateEmail(email)) {
+      showMessage("Invalid email format", "error");
+      return;
+    }
+    const { isValid, message } = validatePassword(password);
+    if (!isValid) {
+      showMessage(message, "error");
       return;
     }
 
-    if (password.length !== confirmPassword.length) {
-      alert("Passwords do not match");
+    if (password !== confirmPassword) {
+      showMessage("Passwords do not match", "error");
       return;
     }
-
-    register(userName, email, password);
+    await register(userName, email, password);
   };
+
   return (
-    <div className="signup-component">
-      <h2>REGISTRATION</h2>
-      <div className="input-fields">
-        <form onSubmit={handleSignupSubmit} className="form-container">
-          <label>UserName:</label>
-          <input
-            className="signup-field"
-            type="text"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            required
-          />
-          <label>Email:</label>
-          <input
-            className="signup-field"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <br />
-          <label>Password:</label>
-          <input
-            className="signup-field"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <label>Confirm Password:</label>
-          <input
-            className="signup-field"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-          <button className="signup-btn">Signup</button>
-        </form>
-        <p>
-          Already have an account? <Link to="/">Login</Link>
-        </p>
-      </div>
-    </div>
+    <Box
+      className="signup-component"
+      sx={{ backgroundColor: theme.palette.background.default }}>
+      <Typography
+        variant="h5"
+        sx={{ color: theme.palette.text.primary, fontWeight: 700 }}>
+        REGISTER
+      </Typography>
+      <SignupForm
+        userName={userName}
+        setUserName={setUserName}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        confirmPassword={confirmPassword}
+        setConfirmPassword={setConfirmPassword}
+        handleSignupSubmit={handleSignupSubmit}
+      />
+    </Box>
   );
 };
+
 export default Signup;

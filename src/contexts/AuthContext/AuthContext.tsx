@@ -1,16 +1,5 @@
 import { createContext } from "react";
+import AuthContextProps from "../../interface/AuthContextProps";
 
-interface AuthContextType {
-  auth: { accessToken: string | null; refreshToken: string | null };
-  login: (email: string, password: string) => Promise<void>;
-  register: (
-    userName: string,
-    email: string,
-    password: string
-  ) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export default AuthContext;

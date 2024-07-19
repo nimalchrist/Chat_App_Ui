@@ -1,178 +1,91 @@
-import React, { useState, useEffect, useRef } from "react";
-import MessageList from "./MessageList";
-import MessageForm from "./MessageForm";
+import { Box } from "@mui/material";
+import React, { useCallback, useEffect } from "react";
+import useChatMessages from "../../hooks/useChatMessages";
+import useChatSearch from "../../hooks/useChatSearch";
+import useThemeToggle from "../../hooks/useThemeToggle";
+import ChatProps from "../../interface/ChatProps";
+import ChatWindowHeader from "./ChatWindowHeader";
 import ClientCount from "./ClientCount";
-import Message from "../../dto/Message";
-import useAuthentication from "../../hooks/useAuthentication";
-import useSocket from "../../hooks/useSocket";
-import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
-import "../../assets/styles/Chat.css";
+import MessageForm from "./MessageForm";
+import MessageList from "./MessageList";
 
-interface ChatProps {
-  roomData: string | undefined;
-}
+const Chat: React.FC<ChatProps> = ({ roomName }) => {
+  // theme toggler hook to toggle between dark and light theme
+  const { theme } = useThemeToggle();
 
-const Chat: React.FC<ChatProps> = ({ roomData }) => {
-  const { socket, setSocket } = useSocket();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [clientsTotal, setClientsTotal] = useState<number>(0);
-  const [feedback, setFeedback] = useState<string>("");
-  const messageContainerRef = useRef<HTMLUListElement>(null);
-  const { logout } = useAuthentication();
-  const parsedUserData = useAuthenticatedUser();
+  // chat messages hook to handle all the functionalities of the chat sending receiving activities
+  const {
+    authData,
+    roomKey,
+    messages,
+    clientsTotal,
+    feedback,
+    handleSendMessage,
+    handleFeedback,
+  } = useChatMessages(roomName!);
 
-  // handlers
-  const handleSendMessage = (message: string) => {
-    if (!socket) {
-      console.error("Socket is not initialized");
-      return;
-    }
-    const newMessage: Message = {
-      name: parsedUserData!.userName,
-      message,
-      dateTime: new Date(),
-      userId: parsedUserData!._id,
-    };
-    socket.emit("message", newMessage, roomData);
-  };
+  // chat search hook to provide the chat history searching functionality
+  const {
+    searchTerm,
+    searchMode,
+    searchResults,
+    currentSearchIndex,
+    handleNextSearchResult,
+    handleSearchApiTrigger,
+    handleSearchInputChange,
+    handleSearchToggle,
+    messageContainerRef,
+  } = useChatSearch(roomKey!);
 
-  const handleFeedback = (feedback: string) => {
-    if (socket && roomData) {
-      socket.emit("feedback", { feedback, roomId: roomData });
-    }
-  };
-
-  const handleChatMessage = (receivedMessage: Message) => {
-    setMessages((prevMessages: Message[]) => [
-      ...prevMessages,
-      receivedMessage,
-    ]);
-  };
-
-  const handleUpdateFeedback = (feedback: string) => {
-    setFeedback(feedback);
-  };
-
-  const handleClientsTotal = (totalClients: number) => {
-    setClientsTotal(totalClients);
-  };
-  const handleLogout = () => {
-    if (socket) {
-      socket.disconnect();
-      setSocket(null);
-    }
-    if (roomData) {
-      localStorage.setItem(
-        `${parsedUserData?.userName}_${roomData}`,
-        JSON.stringify(messages)
-      );
-    }
-    logout();
-  };
-
-  // supportive methods
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTo(
         0,
         messageContainerRef.current.scrollHeight
       );
     }
-  };
+  }, [messageContainerRef]);
 
-  // useEffect hook
-  useEffect(() => {
-    if (socket && roomData && parsedUserData) {
-      socket.emit("chat", roomData, parsedUserData.userName);
-      socket.on("chat-message", handleChatMessage);
-      socket.on("feedback", handleUpdateFeedback);
-      socket.on("clients-total", handleClientsTotal);
-      return () => {
-        socket.off("chat-message", handleChatMessage);
-        socket.off("feedback", handleUpdateFeedback);
-        socket.off("clients-total", handleClientsTotal);
-      };
-    }
-  }, [socket, roomData, parsedUserData]);
-
+  // useEffect hook to provide the chat scrolling functionality
   useEffect(() => {
     scrollToBottom();
-  }, [messages, feedback]);
+  }, [messages, feedback, scrollToBottom]);
 
-  useEffect(() => {
-    if (parsedUserData && roomData) {
-      const storedMessages = localStorage.getItem(
-        `${parsedUserData.userName}_${roomData}`
-      );
-      if (storedMessages) {
-        setMessages(JSON.parse(storedMessages));
-      }
-    }
-  }, [parsedUserData, roomData]);
-
-  useEffect(() => {
-    if (parsedUserData && roomData) {
-      const handleBeforeUnload = () => {
-        localStorage.setItem(
-          `${parsedUserData.userName}_${roomData}`,
-          JSON.stringify(messages)
-        );
-      };
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }
-  }, [parsedUserData, roomData, messages]);
-
-  if (!parsedUserData) {
-    return null;
+  // if authData still not set
+  if (!authData.user) {
+    return <div>Loading...</div>;
   }
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "350px" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          margin: "20px 0px",
-        }}>
-        <h2>{roomData}</h2>
-        <button
-          style={{
-            border: "none",
-            outline: "none",
-            padding: "10px 20px",
-            margin: "20px 0px",
-            backgroundColor: "#3d68f3",
-            color: "white",
-          }}
-          onClick={() => {
-            handleLogout();
-          }}>
-          Logout
-        </button>
-      </div>
-      <div className="chat">
-        <div className="name">
-          <span>
-            <i className="far fa-user"></i>
-          </span>
-          <h3 className="name-input">{parsedUserData.userName}</h3>
-        </div>
+    <Box className="chat-container">
+      <Box
+        className="chat-window"
+        sx={{ backgroundColor: theme.palette.background.chatWindow }}>
+        <ChatWindowHeader
+          authData={authData}
+          searchMode={searchMode}
+          searchTerm={searchTerm}
+          handleSearchToggle={handleSearchToggle}
+          handleNextSearchResult={handleNextSearchResult}
+          handleSearchApiTrigger={handleSearchApiTrigger}
+          handleSearchInputChange={handleSearchInputChange}
+        />
         <MessageList
           messages={messages}
           feedback={feedback}
           ref={messageContainerRef}
-          userId={parsedUserData._id}
+          userId={authData.user!._id}
+          currentSearchIndex={currentSearchIndex}
+          searchResults={searchResults}
         />
         <MessageForm
-          userName={parsedUserData.userName}
+          userName={authData.user!.userName}
           onSendMessage={handleSendMessage}
           onFeedback={handleFeedback}
         />
         <ClientCount total={clientsTotal} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

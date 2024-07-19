@@ -1,33 +1,75 @@
-import React, { forwardRef } from "react";
 import moment from "moment";
-import Message from "../../dto/Message";
+import { forwardRef } from "react";
+import useThemeToggle from "../../hooks/useThemeToggle";
+import MessageListProps from "../../interface/MessageListProps";
+import generateColors from "../../utils/generateColors";
+import randomColorGeneratorMode from "../../utils/randomColorGeneratorMode";
 
-interface Props {
-  messages: Message[];
-  feedback: string;
-  userId: string;
-}
+const MessageList = forwardRef<HTMLUListElement, MessageListProps>(
+  ({ messages, feedback, userId, currentSearchIndex, searchResults }, ref) => {
+    // theme toggler hook to toggle between dark and light theme
+    const { darkMode, theme } = useThemeToggle();
 
-const MessageList = forwardRef<HTMLUListElement, Props>(
-  ({ messages, feedback, userId }, ref) => {
+    // Get the unique userId's
+    const userIds = Array.from(
+      new Set(messages.map((message) => message.userId))
+    );
+
+    // Generate colors for the number of users
+    const userColors = generateColors(
+      userIds.length,
+      darkMode ? randomColorGeneratorMode.Dark : randomColorGeneratorMode.Light
+    );
+
     return (
-      <ul className="message-container" ref={ref}>
-        {messages.map((message, index) => (
-          <li
-            key={index}
-            className={
-              message.userId === userId ? "message-right" : "message-left"
-            }>
-            <p className="message">
-              {message.message}
-              <span>
-                {message.name} | {moment(message.dateTime).fromNow(true)}
-              </span>
-            </p>
-          </li>
-        ))}
+      <ul
+        className="message-container"
+        ref={ref}
+        style={{ backgroundColor: theme.palette.background.default }}>
+        {messages.map((message, index) => {
+          // Check if the current message is part of the search results and is the current search result
+          const isCurrentSearchResult =
+            searchResults[currentSearchIndex] &&
+            searchResults[currentSearchIndex].message === message.message;
+          return (
+            <li
+              key={index}
+              // Apply different classes based on whether the message is from the current user
+              className={`${
+                message.userId === userId ? "message-right" : "message-left"
+              } ${isCurrentSearchResult ? "highlighted" : ""}`}
+              style={{
+                backgroundColor:
+                  message.userId === userId
+                    ? theme.palette.background.senderMessageBubble
+                    : theme.palette.background.receiverMessageBubble,
+                color:
+                  message.userId === userId
+                    ? theme.palette.secondary.main
+                    : darkMode
+                    ? "black"
+                    : theme.palette.text.primary,
+              }}>
+              <p className="message">
+                {message.message}
+                <span
+                  // If the message is not from the user set the color style
+                  style={
+                    message.userId !== userId
+                      ? { color: userColors[userIds.indexOf(message.userId)] }
+                      : {}
+                  }>
+                  {message.name} | {moment(message.dateTime).fromNow(true)}
+                </span>
+              </p>
+            </li>
+          );
+        })}
         {feedback && (
-          <li className="message-feedback">
+          // If feedback is provided render <li> element
+          <li
+            className="message-feedback"
+            style={{ color: theme.palette.text.primary }}>
             <p className="feedback">{feedback}</p>
           </li>
         )}
