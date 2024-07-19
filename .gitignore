@@ -24,3 +24,4 @@ yarn-error.log*
 
 nginx.conf
 Dockerfile
+default.conf
