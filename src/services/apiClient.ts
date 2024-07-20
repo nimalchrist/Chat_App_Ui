@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 // service layer for httpServer
 const apiClient = axios.create({
-  baseURL: "http://localhost:4200/api/v1",
+  baseURL: "https://chatify-server.azurewebsites.net/api/v1",
   timeout: 10000,
 });
 

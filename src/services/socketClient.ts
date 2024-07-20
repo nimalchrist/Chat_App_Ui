@@ -10,7 +10,7 @@ const initialiseSocket = async (path: string): Promise<Socket | null> => {
       resolve(null);
       return;
     }
-    const socket: Socket = io("http://localhost:4200", {
+    const socket: Socket = io("https://chatify-server.azurewebsites.net/", {
       auth: { token },
       query: { path },
     });
@@ -24,10 +24,13 @@ const initialiseSocket = async (path: string): Promise<Socket | null> => {
       token = await refreshAccessToken();
       if (token) {
         storedData = JSON.parse(localStorage.getItem("authData")!);
-        const newSocket: Socket = io("http://localhost:4200", {
-          auth: { token },
-          query: { path },
-        });
+        const newSocket: Socket = io(
+          "https://chatify-server.azurewebsites.net/",
+          {
+            auth: { token },
+            query: { path },
+          }
+        );
         resolve(newSocket);
       } else {
         window.location.href = "/";
